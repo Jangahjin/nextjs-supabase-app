@@ -47,6 +47,7 @@ Server-rendering 환경(Fluid compute)에서는 클라이언트를 전역 변수
 ### 데이터베이스 (Supabase Postgres)
 
 `profiles` 테이블은 `auth.users`의 1:1 확장이며 `supabase/migrations/20260813120000_create_profiles.sql`에 전체 패턴이 정의되어 있다:
+
 - RLS 활성화, `authenticated` 롤에 대해 본인 행만 select/insert/update 가능한 정책
 - `on_auth_user_created` 트리거로 회원가입 시 프로필 행 자동 생성 (`security definer`, `set search_path = ''`)
 - `on_auth_user_email_updated` 트리거로 이메일 변경 동기화
