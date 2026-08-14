@@ -158,13 +158,13 @@ export function login_form() {} // snake_case (금지)
 
 ```typescript
 // ✅ 경로 별칭 사용 (권장)
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { LoginForm } from '@/components/login-form'
-import { createClient } from '@/lib/supabase/client'
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { LoginForm } from "@/components/login-form";
+import { createClient } from "@/lib/supabase/client";
 
 // ❌ 상대 경로 사용 (금지)
-import { Button } from '../../components/ui/button'
+import { Button } from "../../components/ui/button";
 ```
 
 **📍 `components.json`에 정의된 별칭** (모두 `src/` 없이 루트 기준):
@@ -227,15 +227,15 @@ lib/date-utils.ts       # 새 파일 생성
 
 ```typescript
 // 1. 외부 라이브러리
-import { useState } from 'react'
-import type { NextPage } from 'next'
+import { useState } from "react";
+import type { NextPage } from "next";
 
 // 2. 내부 라이브러리 (@/ 경로)
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // 3. 상대 경로
-import './component.css'
+import "./component.css";
 ```
 
 ### 3. Export 규칙
@@ -274,10 +274,12 @@ components/userProfile/LoginForm.tsx
 
 ```typescript
 // 거대한 파일 (500줄 이상)
-export function SuperMegaComponent() { /* ... */ }
+export function SuperMegaComponent() {
+  /* ... */
+}
 
 // 깊은 상대 경로
-import { utils } from '../../../../lib/utils'
+import { utils } from "../../../../lib/utils";
 ```
 
 ## ✅ 체크리스트

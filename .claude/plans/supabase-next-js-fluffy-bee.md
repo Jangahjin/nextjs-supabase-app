@@ -7,6 +7,7 @@
 원격 Supabase 프로젝트(`dmsinrvnbznvipmmntho`, ap-southeast-1, Postgres 17)를 조사한 결과 마이그레이션 이력이 전혀 없고, 로컬에도 `supabase/` 디렉터리나 CLI가 없어 로컬 Docker 스택을 쓸 수 없는 상태다. 따라서 이번 작업에서는 `supabase/migrations/`에 SQL 파일을 만들어 버전관리하는 동시에, Supabase MCP의 `apply_migration`으로 원격에 직접 적용한다.
 
 사용자와 논의해 확정한 범위:
+
 - **공개 범위**: 본인만 열람/수정 가능(비공개 프로필). SELECT/INSERT/UPDATE 모두 `auth.uid() = id` 조건.
 - **필드**: 기본형만 — `id, email, full_name, avatar_url, created_at, updated_at`.
 - **회원가입 폼 변경 없음**: `sign-up-form.tsx`는 건드리지 않는다. `full_name`은 트리거 실행 시 `NULL`로 채워지며, 추후 별도 프로필 수정 기능에서 채우는 구조로 남겨둔다.
