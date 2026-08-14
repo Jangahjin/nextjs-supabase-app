@@ -2,17 +2,16 @@
 
 이 문서는 TailwindCSS v3 + shadcn/ui를 활용한 스타일링 규칙과 모범 사례를 제공합니다.
 
-## 🎨 기술 스택 개요 (실제 설치 버전 기준)
+## 🎨 기술 스택 개요
 
 ### 핵심 스타일링 도구
 
-- **TailwindCSS v3** (`tailwindcss@3.4.19`, `tailwind.config.ts` 기반 설정): 유틸리티 기반 CSS 프레임워크
-- **shadcn/ui**: Radix UI 기반 컴포넌트 라이브러리 (`components.json` 기준 new-york style, baseColor: neutral)
+- **TailwindCSS v3**(`^3.4.1`, 설치된 실제 버전 `3.4.19`): 유틸리티 기반 CSS 프레임워크. `tailwind.config.ts`(JS 설정 파일) + `app/globals.css`의 `@tailwind base/components/utilities` 지시어를 사용하는 v3 방식이며, v4의 CSS-first(`@import "tailwindcss"`, `@theme`) 설정은 아니다.
+- **shadcn/ui**: Radix UI 기반 컴포넌트 라이브러리 (new-york style)
 - **next-themes**: 다크모드 지원
-- **tailwindcss-animate** (`^1.0.7`, `tailwind.config.ts`의 plugins에 등록): Radix 컴포넌트의 open/close 상태 전환 애니메이션 유틸리티
-- **CSS Variables**: 동적 테마 시스템 (`app/globals.css`)
-
-> ⚠️ `prettier-plugin-tailwindcss`는 현재 `package.json`에 설치되어 있지 않다 — 클래스 자동 정렬은 수동으로 아래 순서 규칙을 따를 것.
+- **tailwindcss-animate**: `tailwind.config.ts`의 `plugins`에 등록된 애니메이션 플러그인 (`tw-animate-css`가 아님)
+- **CSS Variables**: 동적 테마 시스템
+- **prettier-plugin-tailwindcss**: 자동 클래스 정렬 (`.prettierrc`의 `plugins`에 등록됨)
 
 ## 🚀 TailwindCSS v3 사용 규칙
 
@@ -243,12 +242,14 @@ export function ThemeToggle() {
 
 ### CSS 변수 기반 색상
 
-`app/globals.css`에 정의된 색상 변수 (실제 값):
+`app/globals.css`에 정의된 색상 변수(shadcn/ui `neutral` base color, HSL 채널 값만 저장하고 `tailwind.config.ts`에서 `hsl(var(--xxx))`로 감싸 사용):
 
 ```css
 :root {
   --background: 0 0% 100%;
   --foreground: 0 0% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
   --primary: 0 0% 9%;
   --primary-foreground: 0 0% 98%;
   --secondary: 0 0% 96.1%;
@@ -262,10 +263,17 @@ export function ThemeToggle() {
   --border: 0 0% 89.8%;
   --input: 0 0% 89.8%;
   --ring: 0 0% 3.9%;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
   --radius: 0.5rem;
 }
-/* .dark 블록은 app/globals.css에 별도로 정의되어 있음 (동일 변수의 다크모드 값) */
+/* .dark 클래스 하위에 각 변수의 다크모드 값이 동일한 키로 재정의되어 있다 */
 ```
+
+`baseColor`가 `neutral`이므로 채도가 거의 없는 그레이스케일 팔레트다(파란빛이 도는 "slate" 계열이 아니다). 색상을 조정할 때는 `app/globals.css`의 `:root`/`.dark` 블록만 바꾸면 `tailwind.config.ts`의 `colors` 매핑을 통해 전체 컴포넌트에 자동 반영된다.
 
 ### 색상 사용 예시
 
@@ -288,17 +296,16 @@ export function ThemeToggle() {
 
 ### tailwindcss-animate 활용
 
-`tw-animate-css`가 아니라 `tailwindcss-animate` 플러그인이 `tailwind.config.ts`의 `plugins`에 등록되어 있다. 별도 import 없이 `tailwind.config.ts`에 플러그인이 등록된 순간부터 `animate-in`/`animate-out` 계열 유틸리티와 `fade-in-*`, `slide-in-from-*`, `zoom-in-*` 등의 조합 클래스를 사용할 수 있다 (Radix UI의 `data-[state=...]` 속성과 함께 쓰기 위해 설계됨):
+`tailwind.config.ts`의 `plugins: [require("tailwindcss-animate")]`로 등록되어 있으며 별도 import 없이 바로 클래스를 사용할 수 있다. `animate-in`/`animate-out` 베이스 클래스에 방향·효과 유틸리티를 조합하는 방식이다(`animate-fadeIn`처럼 임의로 지어낸 클래스명이 아님).
 
 ```tsx
-// ✅ Radix 컴포넌트의 open/close 전환에 흔히 쓰는 조합
-<div className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
-  드롭다운 콘텐츠
-</div>
+// ✅ tailwindcss-animate 조합 클래스 사용
+<div className="animate-in fade-in duration-300">페이드 인</div>
+<div className="animate-in slide-in-from-bottom duration-300">슬라이드 업</div>
+<div className="animate-bounce">바운스</div> {/* Tailwind core 기본 유틸리티 */}
 
-// ✅ Tailwind 기본 내장 애니메이션(별도 플러그인 불필요)
-<div className="animate-bounce">바운스</div>
-<div className="animate-pulse">펄스</div>
+// shadcn/ui의 Radix 기반 컴포넌트(dropdown-menu 등)는 이 플러그인을
+// data-[state=open]:animate-in data-[state=closed]:animate-out 패턴으로 내부에서 이미 사용 중이다
 
 // ✅ Tailwind transition 활용
 <button className="transition-all duration-200 hover:scale-105 hover:shadow-lg">

@@ -1,6 +1,8 @@
 # 컴포넌트 패턴 가이드
 
-이 문서는 Next.js 15.5.3 + React 19 환경에서 효율적이고 재사용 가능한 컴포넌트 작성 패턴을 제공합니다.
+이 문서는 Next.js 16(`package.json`에서 `"latest"`로 고정, 현재 확인된 설치 버전: 16.3.0) + React 19 환경에서 효율적이고 재사용 가능한 컴포넌트 작성 패턴을 제공합니다.
+
+이 문서의 예시는 일반적인 React/Next.js 패턴이며, `UserCard`, `ProductPage`, `Dashboard` 같은 도메인 컴포넌트는 이 저장소에 실재하지 않는 예시 코드다. 실제 컴포넌트 목록과 위치는 `docs/guides/project-structure.md`를 참고할 것.
 
 ## 🧩 기본 설계 원칙
 
@@ -449,10 +451,12 @@ export function Dashboard() {
 }
 ```
 
-### 3. 가상화 (Virtualization)
+### 3. 가상화 (Virtualization) — `react-window` 미설치
+
+`react-window`는 이 프로젝트에 설치되어 있지 않다. 큰 리스트를 실제로 가상화해야 한다면 먼저 `npm install react-window`로 설치할 것.
 
 ```tsx
-// ✅ 큰 리스트 가상화
+// ✅ 큰 리스트 가상화 (설치 후 사용 가능)
 import { FixedSizeList as List } from "react-window";
 
 interface VirtualizedListProps {

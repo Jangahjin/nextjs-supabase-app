@@ -88,10 +88,12 @@ export default function Page({ params }: { params: { id: string } }) {
 // npx @next/codemod@latest next-async-request-api .
 ```
 
-### Typed Routes 활용
+### Typed Routes 활용 (이 프로젝트에서는 아직 비활성화)
+
+`next.config.ts`를 확인하면 이 프로젝트는 현재 `cacheComponents: true`만 설정되어 있고 `typedRoutes`는 켜져 있지 않다. 아래는 Next 16에서 이 옵션을 켰을 때의 사용법이며, 실제로 활성화하려면 `next.config.ts`에 직접 추가해야 한다.
 
 ```typescript
-// 🚀 필수: Typed Routes로 타입 안전성 보장
+// 🚀 typedRoutes 활성화 시: Typed Routes로 타입 안전성 보장
 import Link from 'next/link'
 
 // next.config.ts에서 typedRoutes: true 설정 필요
@@ -245,7 +247,9 @@ export async function updateProduct(id: string, data: ProductData) {
 }
 ```
 
-### Turbopack 설정
+### Turbopack 설정 (이 프로젝트에서는 아직 미사용)
+
+`next.config.ts`에는 현재 `turbopack` 옵션이나 `experimental.optimizePackageImports`가 설정되어 있지 않다(실제로는 `cacheComponents: true` 한 줄뿐). 아래는 필요해졌을 때 추가하는 방법이다.
 
 ```typescript
 // next.config.ts
@@ -313,14 +317,12 @@ export default function UserForm() {
 }
 ```
 
-### Middleware → Proxy 전환 (Next 16 Breaking Change)
+### Middleware → Proxy 전환 (Next 16 Breaking Change) — 이 프로젝트는 이미 전환 완료
 
-Next.js 16.0.0부터 `middleware.ts`는 `proxy.ts`로 이름이 바뀌었고 함수명도 `middleware` → `proxy`로 변경되었습니다. Node.js 런타임이 기본값입니다(15.2에서 실험적으로 도입, 15.5에서 stable, 16에서 기본값으로 전환).
-
-**이 프로젝트는 이미 `proxy.ts`를 사용 중입니다.** 실제 구현은 두 파일로 나뉘어 있습니다:
+Next.js 16.0.0부터 `middleware.ts`는 `proxy.ts`로 이름이 바뀌었고 함수명도 `middleware` → `proxy`로 변경되었습니다. Node.js 런타임이 기본값입니다(15.2에서 실험적으로 도입, 15.5에서 stable, 16에서 기본값으로 전환). **이 프로젝트는 이미 이 패턴을 따르고 있다** — 루트의 `proxy.ts`가 실제 구현체다:
 
 ```typescript
-// proxy.ts (루트) — Supabase 세션 갱신 로직을 위임만 함
+// proxy.ts (실제 코드)
 import { updateSession } from "@/lib/supabase/proxy";
 import { type NextRequest } from "next/server";
 
@@ -333,16 +335,9 @@ export const config = {
 };
 ```
 
-```typescript
-// lib/supabase/proxy.ts — 실제 세션 갱신 + 리다이렉트 로직
-export async function updateSession(request: NextRequest) {
-  // createServerClient 생성, cookies getAll/setAll 동기화,
-  // supabase.auth.getClaims() 호출 후 미인증 사용자를 /auth/login 으로 리다이렉트
-  // (createServerClient와 getClaims() 사이에 다른 코드를 넣지 말 것 — 세션이 랜덤하게 끊길 수 있음)
-}
-```
+실제 인증/리다이렉트 로직은 `proxy.ts`가 아니라 `lib/supabase/proxy.ts`의 `updateSession()`에 있다 — Supabase 세션 쿠키 갱신, `auth.getClaims()`로 사용자 확인, 미인증 사용자를 `/auth/login`으로 리다이렉트하는 로직이 그 안에 있다(자세한 matcher 예외 경로는 `CLAUDE.md`의 Supabase 클라이언트 섹션 참고).
 
-새 프로젝트에서 이 패턴을 처음 도입할 때는 아래 공식 코드모드를 사용하세요.
+기존 `middleware.ts`가 있는 다른 프로젝트를 업그레이드할 때는 공식 코드모드를 사용할 수 있다.
 
 ```bash
 npx @next/codemod@latest next-middleware-to-proxy .
@@ -543,21 +538,26 @@ function UserProfile({ user }: { user: User }) {
 
 ## 코드 품질 체크리스트
 
-`package.json`에는 `dev`/`build`/`start`/`lint` 스크립트만 정의되어 있습니다(`typecheck`, `format:check`, `check-all`은 존재하지 않음 — Prettier 자체도 미설치). 개발 완료 후 다음을 실행하세요:
+개발 완료 후 다음 명령어들을 실행하세요(정확한 스크립트명은 `package.json` 기준):
 
 ```bash
-# 🚀 필수: 타입 체크 (전용 스크립트 없음, tsc 직접 호출)
-npx tsc --noEmit
+# 🚀 필수: 타입 체크 (스크립트명은 typecheck가 아니라 type-check)
+npm run type-check
 
 # 🚀 필수: 린트 검사
 npm run lint
+
+# ✅ 권장: 포맷 검사
+npm run format:check
 
 # 🚀 필수: 빌드 테스트
 npm run build
 ```
 
+`npm run check-all`처럼 위 명령을 한 번에 묶어 실행하는 통합 스크립트는 `package.json`에 없다 — 필요하면 위 네 개를 순서대로 실행하거나, `.github/workflows/ci.yml`이 이미 이 순서(lint → type-check → format:check → build)로 CI를 구성해 두었으니 로컬에서도 그대로 따르면 된다. `.husky/pre-commit`이 `lint-staged`를 통해 staged 파일에는 `eslint --fix` + `prettier --write`를 커밋 시점에 자동 적용한다.
+
 ## 참고: 이 프로젝트의 버전 관리 유의사항
 
-`package.json`에서 `next`가 `"latest"`로 고정되어 있어 설치 시점마다 실제 버전이 달라질 수 있습니다(현재 확인된 버전: 16.3.0). 이 문서의 예시는 16.x 기준으로 작성되었으며, 향후 메이저 업그레이드 시 이 문서도 함께 갱신이 필요합니다. 또한 `eslint-config-next`가 `15.3.1`로 핀 되어 있어 next 본체 버전과 어긋나 있으니, lint 규칙이 최신 Next 16 권장사항과 다를 수 있는 점을 참고하세요.
+`package.json`에서 `next`가 `"latest"`로 고정되어 있어 설치 시점마다 실제 버전이 달라질 수 있습니다(현재 확인된 버전: 16.3.0). 이 문서의 예시는 16.x 기준으로 작성되었으며, 향후 메이저 업그레이드 시 이 문서도 함께 갱신이 필요합니다. `eslint-config-next`는 `^16.3.1`로 next 본체와 같은 메이저 버전에 맞춰져 있다(과거 15.x로 어긋나 있던 상태는 해결됨).
 
 이 지침을 따라 Next.js 16의 모든 기능을 최대한 활용하여 현대적이고 성능 최적화된 애플리케이션을 개발하세요.
