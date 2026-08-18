@@ -66,6 +66,141 @@ export type Database = {
           },
         ];
       };
+      carpool_matches: {
+        Row: {
+          created_at: string;
+          id: string;
+          offer_id: string;
+          request_id: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          offer_id: string;
+          request_id: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          offer_id?: string;
+          request_id?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "carpool_matches_offer_id_fkey";
+            columns: ["offer_id"];
+            isOneToOne: false;
+            referencedRelation: "carpool_offers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "carpool_matches_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: true;
+            referencedRelation: "carpool_requests";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      carpool_offers: {
+        Row: {
+          created_at: string;
+          departure_area: string;
+          departure_area_norm: string | null;
+          driver_id: string;
+          event_id: string;
+          id: string;
+          seats_available: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          departure_area: string;
+          departure_area_norm?: string | null;
+          driver_id?: string;
+          event_id: string;
+          id?: string;
+          seats_available: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          departure_area?: string;
+          departure_area_norm?: string | null;
+          driver_id?: string;
+          event_id?: string;
+          id?: string;
+          seats_available?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "carpool_offers_driver_id_fkey";
+            columns: ["driver_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "carpool_offers_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      carpool_requests: {
+        Row: {
+          created_at: string;
+          departure_area: string;
+          departure_area_norm: string | null;
+          event_id: string;
+          id: string;
+          rider_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          departure_area: string;
+          departure_area_norm?: string | null;
+          event_id: string;
+          id?: string;
+          rider_id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          departure_area?: string;
+          departure_area_norm?: string | null;
+          event_id?: string;
+          id?: string;
+          rider_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "carpool_requests_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "carpool_requests_rider_id_fkey";
+            columns: ["rider_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       event_participants: {
         Row: {
           applied_at: string;
