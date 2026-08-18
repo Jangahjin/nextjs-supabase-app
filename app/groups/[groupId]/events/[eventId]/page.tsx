@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RsvpButton } from "@/components/events/rsvp-button";
+import { DeleteEventButton } from "@/components/events/delete-event-button";
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("ko-KR", {
@@ -99,6 +100,11 @@ async function EventDetail({ params }: { params: Promise<{ groupId: string; even
           카풀
         </Link>
       </div>
+      {isAdmin && (
+        <div className="flex justify-end">
+          <DeleteEventButton groupId={groupId} eventId={eventId} />
+        </div>
+      )}
     </div>
   );
 }
