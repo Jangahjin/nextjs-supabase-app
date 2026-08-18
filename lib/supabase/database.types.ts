@@ -382,6 +382,125 @@ export type Database = {
         };
         Relationships: [];
       };
+      settlement_items: {
+        Row: {
+          amount: number;
+          confirmed_by: string | null;
+          created_at: string;
+          id: string;
+          is_paid: boolean;
+          paid_at: string | null;
+          settlement_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          confirmed_by?: string | null;
+          created_at?: string;
+          id?: string;
+          is_paid?: boolean;
+          paid_at?: string | null;
+          settlement_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          amount?: number;
+          confirmed_by?: string | null;
+          created_at?: string;
+          id?: string;
+          is_paid?: boolean;
+          paid_at?: string | null;
+          settlement_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "settlement_items_confirmed_by_fkey";
+            columns: ["confirmed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settlement_items_settlement_id_fkey";
+            columns: ["settlement_id"];
+            isOneToOne: false;
+            referencedRelation: "settlements";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settlement_items_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      settlements: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          event_id: string;
+          group_id: string;
+          id: string;
+          split_method: string;
+          status: string;
+          title: string;
+          total_amount: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string;
+          event_id: string;
+          group_id: string;
+          id?: string;
+          split_method?: string;
+          status?: string;
+          title: string;
+          total_amount: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          event_id?: string;
+          group_id?: string;
+          id?: string;
+          split_method?: string;
+          status?: string;
+          title?: string;
+          total_amount?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "settlements_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settlements_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: true;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settlements_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;

@@ -77,14 +77,22 @@ async function EventDetail({ params }: { params: Promise<{ groupId: string; even
         participantId={myParticipant?.id ?? null}
         status={myParticipant?.status ?? null}
       />
-      {isAdmin && (
+      <div className="flex gap-4 text-sm">
+        {isAdmin && (
+          <Link
+            href={`/groups/${groupId}/events/${eventId}/participants`}
+            className="underline underline-offset-4"
+          >
+            참여자 관리
+          </Link>
+        )}
         <Link
-          href={`/groups/${groupId}/events/${eventId}/participants`}
-          className="text-sm underline underline-offset-4"
+          href={`/groups/${groupId}/events/${eventId}/settlement`}
+          className="underline underline-offset-4"
         >
-          참여자 관리
+          정산
         </Link>
-      )}
+      </div>
     </div>
   );
 }
