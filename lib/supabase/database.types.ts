@@ -8,6 +8,219 @@ export type Database = {
   };
   public: {
     Tables: {
+      event_participants: {
+        Row: {
+          applied_at: string;
+          created_at: string;
+          event_id: string;
+          id: string;
+          responded_at: string | null;
+          responded_by: string | null;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          applied_at?: string;
+          created_at?: string;
+          event_id: string;
+          id?: string;
+          responded_at?: string | null;
+          responded_by?: string | null;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          applied_at?: string;
+          created_at?: string;
+          event_id?: string;
+          id?: string;
+          responded_at?: string | null;
+          responded_by?: string | null;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "event_participants_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "event_participants_responded_by_fkey";
+            columns: ["responded_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "event_participants_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      events: {
+        Row: {
+          capacity: number | null;
+          created_at: string;
+          created_by: string;
+          description: string | null;
+          end_at: string | null;
+          group_id: string;
+          id: string;
+          location: string | null;
+          rsvp_deadline: string | null;
+          start_at: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          capacity?: number | null;
+          created_at?: string;
+          created_by?: string;
+          description?: string | null;
+          end_at?: string | null;
+          group_id: string;
+          id?: string;
+          location?: string | null;
+          rsvp_deadline?: string | null;
+          start_at: string;
+          status?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          capacity?: number | null;
+          created_at?: string;
+          created_by?: string;
+          description?: string | null;
+          end_at?: string | null;
+          group_id?: string;
+          id?: string;
+          location?: string | null;
+          rsvp_deadline?: string | null;
+          start_at?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "events_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      group_members: {
+        Row: {
+          created_at: string;
+          group_id: string;
+          id: string;
+          joined_at: string | null;
+          role: string;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          group_id: string;
+          id?: string;
+          joined_at?: string | null;
+          role?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          group_id?: string;
+          id?: string;
+          joined_at?: string | null;
+          role?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "group_members_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      groups: {
+        Row: {
+          category: string | null;
+          created_at: string;
+          description: string | null;
+          id: string;
+          invite_code: string;
+          member_limit: number | null;
+          name: string;
+          owner_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          category?: string | null;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          invite_code?: string;
+          member_limit?: number | null;
+          name: string;
+          owner_id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          category?: string | null;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          invite_code?: string;
+          member_limit?: number | null;
+          name?: string;
+          owner_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "groups_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       instruments: {
         Row: {
           id: number;
@@ -55,7 +268,18 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_group_by_invite_code: {
+        Args: { p_invite_code: string };
+        Returns: {
+          category: string;
+          description: string;
+          id: string;
+          member_limit: number;
+          name: string;
+        }[];
+      };
+      is_group_admin: { Args: { p_group_id: string }; Returns: boolean };
+      is_group_member: { Args: { p_group_id: string }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;
