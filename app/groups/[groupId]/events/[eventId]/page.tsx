@@ -92,6 +92,12 @@ async function EventDetail({ params }: { params: Promise<{ groupId: string; even
         >
           정산
         </Link>
+        <Link
+          href={`/groups/${groupId}/events/${eventId}/carpool`}
+          className="underline underline-offset-4"
+        >
+          카풀
+        </Link>
       </div>
     </div>
   );
