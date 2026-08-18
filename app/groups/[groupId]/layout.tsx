@@ -41,6 +41,9 @@ async function GroupNav({ params }: { params: Promise<{ groupId: string }> }) {
         </Link>
         {membership?.status === "approved" && (
           <>
+            <Link href={`/groups/${groupId}/announcements`} className="hover:underline">
+              공지
+            </Link>
             <Link href={`/groups/${groupId}/events`} className="hover:underline">
               일정
             </Link>

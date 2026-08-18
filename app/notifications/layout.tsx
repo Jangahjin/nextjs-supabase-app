@@ -1,5 +1,5 @@
 import { AppShell } from "@/components/nav/app-shell";
 
-export default function GroupsLayout({ children }: { children: React.ReactNode }) {
+export default function NotificationsLayout({ children }: { children: React.ReactNode }) {
   return <AppShell>{children}</AppShell>;
 }

@@ -8,6 +8,64 @@ export type Database = {
   };
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          author_id: string;
+          content: string;
+          created_at: string;
+          event_id: string | null;
+          group_id: string;
+          id: string;
+          pinned: boolean;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          author_id?: string;
+          content: string;
+          created_at?: string;
+          event_id?: string | null;
+          group_id: string;
+          id?: string;
+          pinned?: boolean;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          author_id?: string;
+          content?: string;
+          created_at?: string;
+          event_id?: string | null;
+          group_id?: string;
+          id?: string;
+          pinned?: boolean;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "announcements_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "announcements_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "announcements_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       event_participants: {
         Row: {
           applied_at: string;
@@ -235,6 +293,67 @@ export type Database = {
           name?: string;
         };
         Relationships: [];
+      };
+      notifications: {
+        Row: {
+          body: string | null;
+          created_at: string;
+          id: string;
+          link_path: string | null;
+          read_at: string | null;
+          related_event_id: string | null;
+          related_group_id: string | null;
+          title: string;
+          type: string;
+          user_id: string;
+        };
+        Insert: {
+          body?: string | null;
+          created_at?: string;
+          id?: string;
+          link_path?: string | null;
+          read_at?: string | null;
+          related_event_id?: string | null;
+          related_group_id?: string | null;
+          title: string;
+          type: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string | null;
+          created_at?: string;
+          id?: string;
+          link_path?: string | null;
+          read_at?: string | null;
+          related_event_id?: string | null;
+          related_group_id?: string | null;
+          title?: string;
+          type?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_related_event_id_fkey";
+            columns: ["related_event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_related_group_id_fkey";
+            columns: ["related_group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       profiles: {
         Row: {
