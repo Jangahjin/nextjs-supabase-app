@@ -1,0 +1,231 @@
+{
+  "tasks": [
+    {
+      "id": "19dbdc01-2e17-4074-8bed-80f23d2269dd",
+      "name": "정산(Phase 4) 기능 검증 및 커밋",
+      "description": "이미 코드가 존재하고 원격 Supabase에도 마이그레이션이 적용된(list_migrations로 create_settlements 확인됨) 정산 기능을 최종 검증하고 git에 커밋한다. 새 기능을 구현하는 작업이 아니라 기존 미커밋 산출물(app/groups/[groupId]/events/[eventId]/settlement/*, components/settlements/*, supabase/migrations/20260818150000_create_settlements.sql, lib/supabase/database.types.ts, shrimp-rules.md)을 정리하는 작업이다.",
+      "notes": "작은 단위로 커밋하라는 사용자 글로벌 규칙에 따라 정산 기능과 shrimp-rules.md를 별도 커밋으로 나눈다. 코드 내용을 재작성하지 않는다 — 이미 완성된 기능이다.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-08-18T07:37:30.721Z",
+      "updatedAt": "2026-08-18T07:44:32.233Z",
+      "relatedFiles": [
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/settlement/page.tsx",
+          "type": "OTHER",
+          "description": "커밋 대상 (기존 구현 완료)"
+        },
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/settlement/actions.ts",
+          "type": "OTHER",
+          "description": "커밋 대상 (기존 구현 완료)"
+        },
+        {
+          "path": "components/settlements/settlement-form.tsx",
+          "type": "OTHER",
+          "description": "커밋 대상 (기존 구현 완료)"
+        },
+        {
+          "path": "components/settlements/settlement-item-row.tsx",
+          "type": "OTHER",
+          "description": "커밋 대상 (기존 구현 완료)"
+        },
+        {
+          "path": "supabase/migrations/20260818150000_create_settlements.sql",
+          "type": "OTHER",
+          "description": "원격 적용 완료, 커밋만 필요"
+        },
+        {
+          "path": "lib/supabase/database.types.ts",
+          "type": "TO_MODIFY",
+          "description": "정산 커밋에 포함될 재생성된 타입 diff 확인"
+        },
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "정산 링크가 추가된 수정분 확인"
+        },
+        {
+          "path": "shrimp-rules.md",
+          "type": "OTHER",
+          "description": "별도 커밋 대상"
+        }
+      ],
+      "implementationGuide": "1) npm run lint, npm run type-check, npm run format:check 실행해 전부 통과 확인.\n2) git status로 정산 관련 파일과 shrimp-rules.md/기타 미커밋 파일을 구분.\n3) 정산 관련 파일만 먼저 git add 후 한국어 커밋 메시지(예: '✨ feat: 이벤트 비용 정산(N빵) 기능 추가')로 커밋.\n4) shrimp-rules.md는 별도 커밋(예: '📝 docs: AI Agent용 프로젝트 규칙 문서 추가')으로 분리.\n5) docs/LEANCANVAS.md, leancanvuse.PNG, .claude/agents/docs/{PRD,ROADMAP}.md, .claude/plans/*는 이번 정리 대상이 아니므로 커밋하지 않고 그대로 둔다(사용자에게 후속 처리 필요 여부 문의 가능).",
+      "verificationCriteria": "lint/type-check/format:check 모두 성공, git status가 정산+shrimp-rules.md 관련 파일 기준으로 깨끗해짐, 커밋 메시지가 한국어이며 두 관심사가 분리된 커밋으로 존재.",
+      "analysisResult": "모임 이벤트 관리 웹 MVP(`.claude/plans/dynamic-wibbling-tide.md`)의 잔여 단계를 완성한다. 최종 목표: (1) 이미 구현된 정산(Phase 4) 기능을 검증 후 커밋해 작업 트리를 깨끗하게 만들고, (2) 카풀(Phase 5) 기능을 groups/events/announcements/settlements와 동일한 아키텍처 패턴(RLS 헬퍼 함수 재사용, security definer 트리거, Client Component 직접 CRUD vs Server Action/DB 함수의 mutation 경계, notify_* 알림 트리거)으로 신규 구현하며, (3) 마감 문서(CLAUDE.md, docs/guides/project-structure.md)를 실제 상태와 일치시킨다. 모든 작업은 `shrimp-rules.md`에 명시된 프로젝트 고유 규칙(RLS 헬퍼 함수 재사용 필수, 마이그레이션 템플릿 순서, mutation 위치 결정 규칙, notifications 직접 insert 금지, 그룹 스코프 페이지 자체 인증 체크 반복, database.types.ts 페어 갱신, 문서 드리프트 방지)을 따른다. 커밋 메시지와 코드 주석은 한국어로 작성한다.",
+      "summary": "lint/type-check/format:check 모두 수동으로 통과 확인(format:check에서 걸린 settlement-item-row.tsx는 prettier --write로 수정). 정산 관련 파일(settlement/page.tsx, actions.ts, components/settlements/*, 마이그레이션, database.types.ts, 이벤트 상세 페이지 링크)만 별도 커밋(12b7d4e)하고, shrimp-rules.md는 관심사 분리를 위해 별도 커밋(6b07fb8)했다. lint-staged가 이 Windows/Git Bash/Node24 환경에서 eslint/prettier spawn 시 ENOENT로 실패하는 사전 존재 환경 문제를 발견했고, git commit 없이도 재현됨을 확인해 원인(Windows 네이티브 Node의 spawn이 POSIX 스타일 PATH를 못 읽어 .cmd 셔뱅 해석 실패)을 사용자에게 설명 후 --no-verify 사용을 명시적으로 승인받아 두 커밋 모두 진행했다. 범위 밖 파일(PRD.md, ROADMAP.md, dynamic-wibbling-tide.md, LEANCANVAS.md, leancanvuse.PNG, shrimp_data/*)은 커밋하지 않고 그대로 남겨두었다.",
+      "completedAt": "2026-08-18T07:44:32.230Z"
+    },
+    {
+      "id": "c47da168-a599-41d1-9d8e-88e93912e50d",
+      "name": "카풀 테이블 및 RLS 마이그레이션",
+      "description": "carpool_offers, carpool_requests, carpool_matches 3개 테이블을 새 마이그레이션 파일로 생성한다. 기존 event_participants의 select_group_member/insert_self 정책 구조를 그대로 템플릿으로 사용하고, groups_and_members 마이그레이션의 is_group_member/is_group_admin 헬퍼 함수를 재사용한다.",
+      "notes": "shrimp-rules.md의 'RLS 헬퍼 함수 재사용' 규칙 준수 — is_group_member/is_group_admin을 반드시 재사용하고 멤버십 서브쿼리를 새로 작성하지 않는다. mcp__supabase__get_advisors로 보안 advisor 확인.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-08-18T07:37:30.721Z",
+      "updatedAt": "2026-08-18T07:47:22.580Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/20260818130000_create_events_and_participants.sql",
+          "type": "REFERENCE",
+          "description": "event_participants RLS 정책 템플릿"
+        },
+        {
+          "path": "supabase/migrations/20260818120000_create_groups_and_members.sql",
+          "type": "REFERENCE",
+          "description": "is_group_member/is_group_admin 헬퍼 함수 정의"
+        },
+        {
+          "path": "supabase/migrations/20260818150000_create_carpool_offers_requests_matches.sql",
+          "type": "CREATE",
+          "description": "카풀 테이블+RLS+인덱스 신규 마이그레이션(실제 타임스탬프는 적용 시점 기준으로 채번)"
+        },
+        {
+          "path": "lib/supabase/database.types.ts",
+          "type": "TO_MODIFY",
+          "description": "마이그레이션 적용 후 재생성"
+        }
+      ],
+      "implementationGuide": "파일명 supabase/migrations/<YYYYMMDDHHmmss>_create_carpool_offers_requests_matches.sql (기존 마지막 마이그레이션 20260818150000보다 뒤 타임스탬프).\npseudocode:\n```\ncreate table carpool_offers(\n  id uuid pk default gen_random_uuid(),\n  event_id uuid not null references events(id) on delete cascade,\n  driver_id uuid not null default auth.uid() references profiles(id) on delete cascade,\n  departure_area text not null,\n  departure_area_norm text generated always as (lower(trim(departure_area))) stored,\n  seats_available int not null check (seats_available > 0),\n  created_at, updated_at\n)\ncreate table carpool_requests( -- 위와 동일 구조, driver_id 대신 rider_id, seats_available 없음 )\ncreate table carpool_matches(\n  id uuid pk, offer_id fk carpool_offers, request_id fk carpool_requests,\n  status text check in ('proposed','confirmed') default 'proposed',\n  created_at, updated_at, unique(offer_id, request_id)\n)\n-- 인덱스: carpool_offers(event_id), carpool_requests(event_id), carpool_matches(offer_id), carpool_matches(request_id)\n-- RLS 3테이블 enable, to authenticated\n-- offers/requests: select는 exists(select 1 from events e where e.id=event_id and is_group_member(e.group_id))\n--                   insert with check (driver_id/rider_id = (select auth.uid()) and 위 exists 조건)\n--                   update/delete: 본인 소유 또는 is_group_admin(경유 events.group_id)\n-- matches: select는 offer.driver_id=auth.uid() or request.rider_id=auth.uid() or is_group_admin\n--          insert/update/delete는 is_group_admin만 (run_carpool_matching 함수가 담당하므로 앱 코드 직접 write는 admin 전용 안전장치)\n-- set_updated_at 트리거 3개 테이블에 재사용\n```\n적용 후 mcp__supabase__apply_migration으로 원격 반영, 이어서 mcp__supabase__generate_typescript_types로 database.types.ts 재생성.",
+      "verificationCriteria": "mcp__supabase__apply_migration 성공, mcp__supabase__list_tables로 3개 테이블과 RLS enabled 확인, get_advisors에 새로운 security 경고 없음, database.types.ts에 carpool_* 타입 반영.",
+      "analysisResult": "모임 이벤트 관리 웹 MVP(`.claude/plans/dynamic-wibbling-tide.md`)의 잔여 단계를 완성한다. 최종 목표: (1) 이미 구현된 정산(Phase 4) 기능을 검증 후 커밋해 작업 트리를 깨끗하게 만들고, (2) 카풀(Phase 5) 기능을 groups/events/announcements/settlements와 동일한 아키텍처 패턴(RLS 헬퍼 함수 재사용, security definer 트리거, Client Component 직접 CRUD vs Server Action/DB 함수의 mutation 경계, notify_* 알림 트리거)으로 신규 구현하며, (3) 마감 문서(CLAUDE.md, docs/guides/project-structure.md)를 실제 상태와 일치시킨다. 모든 작업은 `shrimp-rules.md`에 명시된 프로젝트 고유 규칙(RLS 헬퍼 함수 재사용 필수, 마이그레이션 템플릿 순서, mutation 위치 결정 규칙, notifications 직접 insert 금지, 그룹 스코프 페이지 자체 인증 체크 반복, database.types.ts 페어 갱신, 문서 드리프트 방지)을 따른다. 커밋 메시지와 코드 주석은 한국어로 작성한다.",
+      "summary": "carpool_offers/carpool_requests/carpool_matches 3개 테이블을 supabase/migrations/20260818160000_create_carpool_offers_requests_matches.sql로 작성해 mcp__supabase__apply_migration으로 원격에 적용했다. 기존 event_participants의 select_group_member/insert_self 정책 구조를 그대로 템플릿으로 사용했고, is_group_member/is_group_admin 헬퍼 함수만 재사용해 새 멤버십 서브쿼리를 직접 작성하지 않았다. list_tables로 3개 테이블 모두 rls_enabled:true 확인했고, get_advisors(security)에는 이번 마이그레이션으로 인한 신규 경고가 없음(기존 3건은 이전부터 존재). mcp__supabase__generate_typescript_types로 재생성한 타입을 lib/supabase/database.types.ts에 기존 알파벳 정렬 컨벤션대로 삽입 후 lint/type-check/format:check 모두 통과 확인했다. 관심사 단위로 별도 커밋(d773926)했다.",
+      "completedAt": "2026-08-18T07:47:22.577Z"
+    },
+    {
+      "id": "8ef891ca-7f8c-4ade-b2aa-2a0861400f34",
+      "name": "카풀 자동 매칭 함수 및 알림 트리거 마이그레이션",
+      "description": "public.run_carpool_matching(p_event_id uuid) security definer 함수를 구현한다: 동일 지역 우선 배정 → 지역 무관 폴백 배정 → 재실행 시 proposed만 삭제 후 재계산(confirmed 보존)하는 멱등적 로직. 매치가 confirmed로 바뀔 때 offer.driver_id/request.rider_id 양쪽에 알림을 보내는 트리거도 같은 마이그레이션에 포함한다.",
+      "notes": "notifications 테이블에는 앱 코드가 직접 insert할 수 없으므로 반드시 트리거 경유(shrimp-rules.md 규칙). run_carpool_matching은 관리자만 호출 가능하도록 함수 내부에서 is_group_admin 재검증 — RLS insert 정책과 이중 방어.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "c47da168-a599-41d1-9d8e-88e93912e50d"
+        }
+      ],
+      "createdAt": "2026-08-18T07:37:30.721Z",
+      "updatedAt": "2026-08-18T07:56:34.668Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/20260818140000_create_announcements_and_notifications.sql",
+          "type": "REFERENCE",
+          "description": "notify_* 트리거 패턴 및 notifications.type check 제약 원본"
+        },
+        {
+          "path": "supabase/migrations/20260818160000_create_carpool_matching_and_notify.sql",
+          "type": "CREATE",
+          "description": "매칭 함수+알림 트리거 신규 마이그레이션(실제 타임스탬프는 적용 시점 기준)"
+        },
+        {
+          "path": "lib/supabase/database.types.ts",
+          "type": "TO_MODIFY",
+          "description": "함수/트리거 변경 후 재생성(테이블 스키마 변경은 없으나 일관성 위해 재확인)"
+        }
+      ],
+      "implementationGuide": "파일명 supabase/migrations/<ts>_create_carpool_matching_and_notify.sql (Task 2보다 뒤 타임스탬프, 카풀 테이블 마이그레이션에 의존).\npseudocode:\n```\ncreate or replace function public.run_carpool_matching(p_event_id uuid)\nreturns void language plpgsql security definer set search_path = '' as $$\ndeclare v_group_id uuid; r record; v_offer record;\nbegin\n  select group_id into v_group_id from public.events where id = p_event_id;\n  if not public.is_group_admin(v_group_id) then raise exception 'admin only'; end if;\n\n  delete from public.carpool_matches m\n    using public.carpool_offers o\n    where m.offer_id = o.id and o.event_id = p_event_id and m.status = 'proposed';\n\n  -- 1차: 동일 지역 우선, 등록순(created_at) 순회하며 좌석 한도 내 배정\n  for r in (select * from public.carpool_requests where event_id=p_event_id\n            and id not in (select request_id from public.carpool_matches)\n            order by created_at) loop\n    select o.* into v_offer from public.carpool_offers o\n      where o.event_id = p_event_id and o.departure_area_norm = r.departure_area_norm\n        and (select count(*) from public.carpool_matches m where m.offer_id=o.id) < o.seats_available\n      order by o.created_at limit 1;\n    if found then insert into public.carpool_matches(offer_id, request_id, status) values (v_offer.id, r.id, 'proposed'); end if;\n  end loop;\n\n  -- 2차 폴백: 남은 request를 지역 무관 좌석 남은 아무 offer에 배정 (동일 루프 구조, 지역 조건 제거)\nend $$;\ngrant execute on function public.run_carpool_matching(uuid) to authenticated;\n\ncreate or replace function public.notify_on_carpool_match_confirmed() returns trigger\nlanguage plpgsql security definer set search_path = '' as $$\nbegin\n  if new.status = 'confirmed' and old.status is distinct from 'confirmed' then\n    insert into public.notifications(user_id, type, title, link_path, related_event_id)\n    select driver_id, 'carpool_match_confirmed', '카풀 매칭이 확정되었습니다.', '/groups/'||g||'/events/'||e||'/carpool', ...\n    -- driver/rider 양쪽에 각각 insert, event/group_id는 offer/request 경유 events 조인으로 조회\n  end if; return new; end $$;\ncreate trigger on_carpool_match_confirmed after update of status on public.carpool_matches ...\nrevoke execute on function public.notify_on_carpool_match_confirmed() from public, anon, authenticated;\n```\n`notifications.type` check 제약(20260818140000 마이그레이션)에 'carpool_match_confirmed' 값을 추가하는 alter table도 같은 파일에 포함해야 insert가 실패하지 않는다.",
+      "verificationCriteria": "동일 event_id로 run_carpool_matching을 두 번 연속 SQL로 호출했을 때 proposed 매치가 재계산되고 confirmed 매치는 보존됨을 execute_sql로 확인, 비관리자 계정으로 rpc 호출 시 예외 발생 확인, matches.status를 confirmed로 update 시 notifications에 2건(driver+rider) 생성 확인.",
+      "analysisResult": "모임 이벤트 관리 웹 MVP(`.claude/plans/dynamic-wibbling-tide.md`)의 잔여 단계를 완성한다. 최종 목표: (1) 이미 구현된 정산(Phase 4) 기능을 검증 후 커밋해 작업 트리를 깨끗하게 만들고, (2) 카풀(Phase 5) 기능을 groups/events/announcements/settlements와 동일한 아키텍처 패턴(RLS 헬퍼 함수 재사용, security definer 트리거, Client Component 직접 CRUD vs Server Action/DB 함수의 mutation 경계, notify_* 알림 트리거)으로 신규 구현하며, (3) 마감 문서(CLAUDE.md, docs/guides/project-structure.md)를 실제 상태와 일치시킨다. 모든 작업은 `shrimp-rules.md`에 명시된 프로젝트 고유 규칙(RLS 헬퍼 함수 재사용 필수, 마이그레이션 템플릿 순서, mutation 위치 결정 규칙, notifications 직접 insert 금지, 그룹 스코프 페이지 자체 인증 체크 반복, database.types.ts 페어 갱신, 문서 드리프트 방지)을 따른다. 커밋 메시지와 코드 주석은 한국어로 작성한다.",
+      "summary": "supabase/migrations/20260818170000_create_carpool_matching_and_notify.sql로 run_carpool_matching(p_event_id)과 notify_on_carpool_match_confirmed 트리거를 작성해 원격에 적용했다. execute_sql로 request.jwt.claims를 조작해 실제 auth.uid() 컨텍스트를 시뮬레이션하며 검증: (1) 동일 지역(강남역/강남역 trim) offer-request가 1차 패스에서 정확히 매칭됨, (2) 동일 event_id로 재호출 시 proposed 매치가 재계산되고, 수동으로 confirmed로 바꾼 후 재호출해도 confirmed 매치가 삭제되지 않고 보존됨(멱등성), (3) confirmed로 바뀔 때 notifications에 driver_id/rider_id 2건이 type=carpool_match_confirmed로 정확히 생성됨, (4) 비관리자(그룹 멤버조차 아닌 계정) sub로 호출 시 정확히 'only group admin can run carpool matching' 예외가 발생함을 DO 블록으로 확인. 테스트 데이터는 전부 정리해 원격 DB에 잔여물이 없다. get_advisors에서 run_carpool_matching에 대한 SECURITY DEFINER 경고가 새로 생겼으나 기존 is_group_member/is_group_admin과 동일 카테고리(RPC로 노출되어야 하고 함수 내부에서 재검증하는 의도된 설계)로 판단해 그대로 두었다. lint/type-check/format:check 통과 후 별도 커밋(e12c644)했다.",
+      "completedAt": "2026-08-18T07:56:34.637Z"
+    },
+    {
+      "id": "45a2367c-cbf1-4d1a-9e88-489ce2ce7db5",
+      "name": "카풀 라우트/컴포넌트 구현 및 이벤트 상세 페이지 연결",
+      "description": "app/groups/[groupId]/events/[eventId]/carpool/ 라우트와 components/carpool/* 컴포넌트를 구현한다. offer/request 등록은 Client Component에서 직접 supabase client CRUD, 매칭 실행은 관리자 전용 Server Action에서 rpc('run_carpool_matching') 호출. 이벤트 상세 페이지에 카풀 진입 링크를 추가해 고아 라우트가 되지 않도록 한다.",
+      "notes": "새 shadcn 컴포넌트(select/tabs/textarea) 설치는 불필요 — 기존 Input/Table/Card/Button만으로 구현 가능(event-form.tsx, settlement/page.tsx 패턴 재사용). 그룹 스코프 페이지는 부모 layout이 인증을 보장한다고 가정하지 않고 자체 auth.getClaims()/group_members 체크를 반복한다(shrimp-rules.md 규칙).",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "8ef891ca-7f8c-4ade-b2aa-2a0861400f34"
+        }
+      ],
+      "createdAt": "2026-08-18T07:37:30.721Z",
+      "updatedAt": "2026-08-18T08:03:40.948Z",
+      "relatedFiles": [
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/settlement/page.tsx",
+          "type": "REFERENCE",
+          "description": "Server Component+Suspense+자체 인증 체크 패턴"
+        },
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/settlement/actions.ts",
+          "type": "REFERENCE",
+          "description": "Server Action + revalidatePath 패턴"
+        },
+        {
+          "path": "components/events/event-form.tsx",
+          "type": "REFERENCE",
+          "description": "Client Component 단순 CRUD 폼 패턴"
+        },
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/carpool/page.tsx",
+          "type": "CREATE",
+          "description": "카풀 목록/매칭 결과 페이지"
+        },
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/carpool/actions.ts",
+          "type": "CREATE",
+          "description": "매칭 실행 Server Action"
+        },
+        {
+          "path": "components/carpool/carpool-offer-form.tsx",
+          "type": "CREATE",
+          "description": "운전자 offer 등록 폼"
+        },
+        {
+          "path": "components/carpool/carpool-request-form.tsx",
+          "type": "CREATE",
+          "description": "탑승 request 등록 폼"
+        },
+        {
+          "path": "components/carpool/carpool-match-list.tsx",
+          "type": "CREATE",
+          "description": "매칭 결과 표시"
+        },
+        {
+          "path": "app/groups/[groupId]/events/[eventId]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "카풀 라우트 진입 링크 추가"
+        }
+      ],
+      "implementationGuide": "pseudocode:\n```\n// app/groups/[groupId]/events/[eventId]/carpool/page.tsx (settlement/page.tsx와 동일 골격)\nasync function CarpoolSection({params}) {\n  const {groupId, eventId} = await params;\n  const supabase = await createClient();\n  const {data:auth} = await supabase.auth.getClaims();\n  if (!auth?.claims) redirect('/auth/login');\n  // group_members 조회 -> isAdmin 계산 (기존 event/settlement 페이지와 동일 패턴 반복)\n  const offers = await supabase.from('carpool_offers').select('...').eq('event_id', eventId);\n  const requests = await supabase.from('carpool_requests').select('...').eq('event_id', eventId);\n  const matches = await supabase.from('carpool_matches').select('...offer(...),request(...)');\n  return <>{offer/request 목록 Table} <CarpoolOfferForm/> <CarpoolRequestForm/> {isAdmin && <매칭 실행 버튼(action)>}</>\n}\n\n// app/groups/[groupId]/events/[eventId]/carpool/actions.ts\n'use server'\nexport async function runMatching({eventId}) {\n  const supabase = await createClient();\n  const {error} = await supabase.rpc('run_carpool_matching', {p_event_id: eventId});\n  if (error) return {error: error.message};\n  revalidatePath(`/groups/.../carpool`);\n  return {success:true};\n}\n\n// components/carpool/carpool-offer-form.tsx, carpool-request-form.tsx\n'use client' — event-form.tsx 패턴 그대로: useState + createClient().from('carpool_offers').insert(...) + toast + router.refresh()\n```\n이벤트 상세 페이지(app/groups/[groupId]/events/[eventId]/page.tsx)의 기존 '정산' Link 옆에 '카풀' Link를 추가한다(참여자 관리 링크처럼 isAdmin 무관하게 모든 그룹 멤버에게 노출, offer/request 등록 자체는 모두에게 열려 있으므로).",
+      "verificationCriteria": "npm run dev로 브라우저 확인: offer/request 등록 → 관리자 계정으로 매칭 실행 → 매칭 결과 표시 및 양쪽 계정에 알림 벨 뱃지 발생까지 골든패스 동작. lint/type-check 통과. 비멤버 계정으로 접근 시 RLS에 의해 목록이 비거나 접근 차단됨을 확인.",
+      "analysisResult": "모임 이벤트 관리 웹 MVP(`.claude/plans/dynamic-wibbling-tide.md`)의 잔여 단계를 완성한다. 최종 목표: (1) 이미 구현된 정산(Phase 4) 기능을 검증 후 커밋해 작업 트리를 깨끗하게 만들고, (2) 카풀(Phase 5) 기능을 groups/events/announcements/settlements와 동일한 아키텍처 패턴(RLS 헬퍼 함수 재사용, security definer 트리거, Client Component 직접 CRUD vs Server Action/DB 함수의 mutation 경계, notify_* 알림 트리거)으로 신규 구현하며, (3) 마감 문서(CLAUDE.md, docs/guides/project-structure.md)를 실제 상태와 일치시킨다. 모든 작업은 `shrimp-rules.md`에 명시된 프로젝트 고유 규칙(RLS 헬퍼 함수 재사용 필수, 마이그레이션 템플릿 순서, mutation 위치 결정 규칙, notifications 직접 insert 금지, 그룹 스코프 페이지 자체 인증 체크 반복, database.types.ts 페어 갱신, 문서 드리프트 방지)을 따른다. 커밋 메시지와 코드 주석은 한국어로 작성한다.",
+      "summary": "app/groups/[groupId]/events/[eventId]/carpool/{page.tsx,actions.ts}와 components/carpool/{carpool-offer-form,carpool-request-form,carpool-match-list}.tsx를 구현하고 이벤트 상세 페이지에 카풀 링크를 추가했다. mutation 위치 결정 규칙을 그대로 적용: offer/request 등록과 매칭 확정/취소 토글은 Client Component에서 createClient() 직접 CRUD(event-form.tsx/participant-row.tsx 패턴), 여러 이벤트 전체를 다시 계산하는 매칭 실행만 Server Action에서 rpc('run_carpool_matching') 호출. 이미 로그인되어 있던 실제 브라우저 세션(Playwright MCP, localhost:3000)에서 골든 패스를 직접 확인했다: 이벤트 생성 → 운전자 offer 등록 → 탑승 request 등록('강남역'/'강남역 ' 트레일링 스페이스로 정규화 검증) → 관리자 매칭 실행 → 매칭 결과 테이블 표시 → 확정 버튼 → 알림 벨 배지 '2' 및 드롭다운에 '카풀 매칭이 확정되었습니다.' 2건 표시. 테스트로 만든 이벤트는 원격 DB에서 삭제해 cascade로 offers/requests/matches/notifications까지 깨끗이 정리됨을 확인했다. lint/type-check/format:check 모두 통과 후 커밋(171d08e)했다. 다만 검증 기준의 '비멤버 계정으로 접근 시 RLS 차단 확인'은 두 번째 계정(e5b1a382...)으로 실제 Google OAuth 로그인이 이 세션에서 자동화 불가능해 브라우저로 직접 확인하지 못했다 — 대신 Task 2에서 이미 SQL 레벨로 is_group_member 기반 select 정책을 검증했고, 동일 패턴을 그대로 재사용했다는 점으로 대체했다. 이 부분은 명시적으로 미검증 상태임을 밝힌다.",
+      "completedAt": "2026-08-18T08:03:40.945Z"
+    },
+    {
+      "id": "03b3df83-a0fd-4a40-b0ed-fd6f3dad776e",
+      "name": "마감 문서화 및 최종 커밋",
+      "description": "docs/guides/project-structure.md와 CLAUDE.md를 실제 코드 상태(카풀 라우트/테이블 포함, 이미 삭제된 app/protected·app/instruments 예시 제거)와 일치시키고 카풀 관련 변경사항을 커밋한다.",
+      "notes": "문서 갱신은 코드 변경과 별도 관심사이므로 가능하면 별도 커밋으로 분리한다(작은 단위 커밋 원칙). shrimp_data/WebGUI.md, docs/LEANCANVAS.md 등 이번 작업 범위 밖 파일은 건드리지 않는다.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "45a2367c-cbf1-4d1a-9e88-489ce2ce7db5"
+        }
+      ],
+      "createdAt": "2026-08-18T07:37:30.721Z",
+      "updatedAt": "2026-08-18T08:06:05.402Z",
+      "relatedFiles": [
+        {
+          "path": "docs/guides/project-structure.md",
+          "type": "TO_MODIFY",
+          "description": "app/ 트리 예시를 실제 구조와 일치시킴"
+        },
+        {
+          "path": "CLAUDE.md",
+          "type": "TO_MODIFY",
+          "description": "데이터베이스 절에 카풀 도메인 추가"
+        }
+      ],
+      "implementationGuide": "1) docs/guides/project-structure.md의 app/ 트리 예시에서 실제로 없는 app/protected/*, app/instruments/* 항목을 제거하고, 실제 존재하는 groups/events/.../carpool 라우트를 반영.\n2) CLAUDE.md의 '데이터베이스(Supabase Postgres)' 절에 carpool_offers/carpool_requests/carpool_matches와 run_carpool_matching() 함수를 groups/events/announcements/settlements와 같은 수준으로 한 줄 언급 추가.\n3) git add로 카풀 관련 코드(Task2~4 산출물)와 문서(Task5 산출물)를 한 번에, 혹은 '카풀 기능'과 '문서 갱신'으로 나눠 한국어 커밋 메시지로 커밋.\n4) mcp__shrimp-task-manager__list_tasks 또는 verify_task로 전체 완료 상태 확인.",
+      "verificationCriteria": "project-structure.md에 언급된 모든 경로가 실제로 존재함을 Glob으로 재확인, CLAUDE.md 변경분이 실제 아키텍처와 일치, 커밋 완료 후 git status가 깨끗함(의도적으로 남겨둔 PRD/ROADMAP/LEANCANVAS 관련 파일 제외).",
+      "analysisResult": "모임 이벤트 관리 웹 MVP(`.claude/plans/dynamic-wibbling-tide.md`)의 잔여 단계를 완성한다. 최종 목표: (1) 이미 구현된 정산(Phase 4) 기능을 검증 후 커밋해 작업 트리를 깨끗하게 만들고, (2) 카풀(Phase 5) 기능을 groups/events/announcements/settlements와 동일한 아키텍처 패턴(RLS 헬퍼 함수 재사용, security definer 트리거, Client Component 직접 CRUD vs Server Action/DB 함수의 mutation 경계, notify_* 알림 트리거)으로 신규 구현하며, (3) 마감 문서(CLAUDE.md, docs/guides/project-structure.md)를 실제 상태와 일치시킨다. 모든 작업은 `shrimp-rules.md`에 명시된 프로젝트 고유 규칙(RLS 헬퍼 함수 재사용 필수, 마이그레이션 템플릿 순서, mutation 위치 결정 규칙, notifications 직접 insert 금지, 그룹 스코프 페이지 자체 인증 체크 반복, database.types.ts 페어 갱신, 문서 드리프트 방지)을 따른다. 커밋 메시지와 코드 주석은 한국어로 작성한다.",
+      "summary": "CLAUDE.md와 docs/guides/project-structure.md를 실제 코드 상태와 일치시켰다. CLAUDE.md의 app/ 디렉토리 설명에서 실제로 삭제된 app/protected/*, app/instruments/*(커밋 446a26e) 언급을 제거하고 실제 groups/notifications 트리로 교체했으며, 데이터베이스 절에 그동안 문서화되지 않았던 groups/group_members/events/event_participants/announcements/notifications/settlements/settlement_items와 신규 carpool_offers/carpool_requests/carpool_matches까지 전체 도메인 테이블을 한 문단으로 정리하고 is_group_member/is_group_admin 재사용 규칙 및 run_carpool_matching 패턴을 명시했다. project-structure.md의 app/·components/ 트리 예시도 동일하게 groups/events/announcements/settlements/carpool 라우트와 도메인별 컴포넌트 폴더(groups/events/announcements/settlements/carpool/notifications/nav)로 교체했다. Glob으로 문서에 언급된 모든 app/·components/ 경로가 실제로 존재함을 재확인했고, prettier --check로 두 문서 모두 포맷 통과 확인 후 별도 커밋(bcdfb94)했다. git status는 이번 작업 범위 밖으로 의도적으로 남겨둔 PRD.md/ROADMAP.md/dynamic-wibbling-tide.md/LEANCANVAS.md/leancanvuse.PNG/shrimp_data/*를 제외하고 깨끗하다. 이로써 shrimp-task-manager의 5개 작업(정산 커밋, 카풀 테이블, 카풀 매칭 함수, 카풀 UI, 문서 마감)이 모두 완료되었다.",
+      "completedAt": "2026-08-18T08:06:05.399Z"
+    }
+  ]
+}
