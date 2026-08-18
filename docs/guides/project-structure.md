@@ -40,11 +40,28 @@ app/
 │   ├── update-password/page.tsx
 │   ├── error/page.tsx
 │   └── confirm/route.ts    # 이메일 확인 콜백 Route Handler
-├── protected/               # 🔒 인증 필요 페이지
-│   ├── layout.tsx
-│   └── page.tsx
-└── instruments/page.tsx     # Supabase 테이블 조회 예시 (Suspense + 서버 컴포넌트 데이터 페칭)
+├── notifications/          # 🔔 인앱 알림 목록 (layout.tsx + page.tsx)
+└── groups/                 # 🧑‍🤝‍🧑 로그인 후 랜딩 — 모임 관리
+    ├── layout.tsx
+    ├── page.tsx             # 내 모임 목록
+    ├── new/page.tsx         # 모임 생성
+    ├── join/[code]/page.tsx # 초대코드로 가입
+    └── [groupId]/
+        ├── layout.tsx        # 모임 헤더 + 하위 네비게이션(자체 인증/멤버십 체크)
+        ├── page.tsx           # 모임 대시보드
+        ├── settings/page.tsx
+        ├── members/page.tsx
+        ├── announcements/{page.tsx, new/page.tsx, [announcementId]/page.tsx}
+        └── events/
+            ├── page.tsx, new/page.tsx
+            └── [eventId]/
+                ├── page.tsx           # 일정 상세 (참여자 관리·정산·카풀 진입 링크)
+                ├── participants/page.tsx
+                ├── settlement/{page.tsx, actions.ts}
+                └── carpool/{page.tsx, actions.ts}
 ```
+
+`app/protected/*`, `app/instruments/*`(Supabase 공식 스타터킷 데모)는 모임 기능 스캐폴딩 과정에서 삭제되었다(커밋 `446a26e`) — 더 이상 존재하지 않는다.
 
 **🚀 App Router 규칙:**
 
@@ -58,25 +75,24 @@ app/
 ```
 components/
 ├── ui/                       # 🎛️ shadcn/ui 원시 컴포넌트
-│   ├── badge.tsx
-│   ├── button.tsx
-│   ├── card.tsx
-│   ├── checkbox.tsx
-│   ├── dropdown-menu.tsx
-│   ├── input.tsx
-│   └── label.tsx
+│   ├── badge.tsx, button.tsx, card.tsx, checkbox.tsx, input.tsx, label.tsx
+│   ├── dropdown-menu.tsx, dialog.tsx, alert-dialog.tsx, table.tsx
+│   ├── avatar.tsx, sonner.tsx
 ├── tutorial/                 # 📘 스타터킷 온보딩용 컴포넌트
-│   ├── code-block.tsx
-│   ├── connect-supabase-steps.tsx
-│   ├── fetch-data-steps.tsx
-│   ├── sign-up-user-steps.tsx
-│   └── tutorial-step.tsx
+├── nav/                       # 🧭 공통 헤더/푸터/앱 셸 (app-header.tsx, app-footer.tsx, app-shell.tsx)
+├── groups/                    # 🧑‍🤝‍🧑 모임 생성/설정/가입/멤버 폼
+├── events/                    # 🗓️ 일정 생성/RSVP/참여자 행
+├── announcements/             # 📢 공지 카드/작성 폼
+├── settlements/                # 💰 정산 생성 폼/항목 행
+├── carpool/                    # 🚗 카풀 offer/request 폼, 매칭 결과 목록
+├── notifications/              # 🔔 헤더 알림 벨(Realtime 구독)
 ├── auth-button.tsx           # 인증 상태에 따른 헤더 버튼
 ├── login-form.tsx            # 로그인 폼 (Client Component, useState 기반)
 ├── sign-up-form.tsx          # 회원가입 폼
 ├── forgot-password-form.tsx
 ├── update-password-form.tsx
 ├── logout-button.tsx
+├── google-auth-button.tsx
 ├── env-var-warning.tsx       # 환경변수 미설정 시 경고 배너
 ├── theme-switcher.tsx        # next-themes 다크모드 토글
 ├── hero.tsx
@@ -85,13 +101,15 @@ components/
 └── next-logo.tsx
 ```
 
-`layout/`, `navigation/`, `sections/`, `providers/` 같은 하위 분류 폴더는 아직 없다 — `components/`가 평평한(flat) 구조이며, `ui/`와 `tutorial/`만 하위 폴더로 분리되어 있다. 새 컴포넌트가 늘어나 평평한 구조가 부담스러워지면 그때 카테고리 폴더를 도입할 것.
+도메인별 하위 폴더(`groups/`, `events/`, `announcements/`, `settlements/`, `carpool/`, `notifications/`, `nav/`)가 `ui/`, `tutorial/`과 함께 이미 도입되어 있다 — 새 도메인 기능을 추가할 때는 `components/<feature-plural>/` 폴더를 만들고 kebab-case 파일명(`<feature>-form.tsx`, `<feature>-item-row.tsx` 등)으로 구성할 것.
 
 **🧩 컴포넌트 분류 규칙:**
 
 1. **ui/**: shadcn/ui 기반 재사용 가능한 기본 컴포넌트 — 순수 UI, 비즈니스 로직 없음
 2. **tutorial/**: 스타터킷 기본 제공 온보딩 컴포넌트 — 실제 서비스 개발 시작 시 제거 대상으로 간주할 것
-3. 그 외: auth/테마 관련 컴포넌트가 `components/` 루트에 평평하게 위치
+3. **도메인 폴더**(`groups/`, `events/`, `announcements/`, `settlements/`, `carpool/`, `notifications/`): 해당 도메인 전용 폼/행/목록 컴포넌트
+4. **nav/**: 여러 라우트에서 공유하는 헤더/푸터/앱 셸
+5. 그 외: auth/테마 관련 컴포넌트가 `components/` 루트에 평평하게 위치
 
 ### lib/ - 유틸리티 및 Supabase 클라이언트
 
