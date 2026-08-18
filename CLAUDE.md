@@ -64,3 +64,13 @@ Server-rendering 환경(Fluid compute)에서는 클라이언트를 전역 변수
 ## `docs/guides/` 폴더
 
 `docs/guides/`에는 상세한 패턴 가이드(`project-structure.md`, `component-patterns.md`, `styling-guide.md`, `forms-react-hook-form.md`, `nextjs-16.md`)가 있으며, 실제 설치 상태·디렉토리 구조·스크립트명과 맞도록 갱신되어 있다(예: `src/` 미사용, TailwindCSS v3, `react-hook-form` 미설치 — 폼은 `useState` + Supabase Auth 직접 호출 패턴, `type-check`/`check-all` 스크립트명 정정). 단, Next.js 16의 활성화 가능한 옵션(`typedRoutes`, `turbopack` 설정 등)처럼 "이 프로젝트에는 아직 없지만 필요시 켤 수 있는 기능"을 설명하는 부분은 각 문서 내에 "이 프로젝트에서는 아직 미사용"이라고 명시되어 있으니, 실제로 켜져 있는지는 항상 `next.config.ts`로 재확인할 것. 코드가 먼저 바뀌면 이 문서들도 함께 갱신해야 드리프트가 재발하지 않는다.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
