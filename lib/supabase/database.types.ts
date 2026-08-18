@@ -653,6 +653,7 @@ export type Database = {
       };
       is_group_admin: { Args: { p_group_id: string }; Returns: boolean };
       is_group_member: { Args: { p_group_id: string }; Returns: boolean };
+      run_carpool_matching: { Args: { p_event_id: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;
