@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GroupSettingsForm } from "@/components/groups/group-settings-form";
 import { InviteCodeBadge } from "@/components/groups/invite-code-badge";
+import { DeleteGroupButton } from "@/components/groups/delete-group-button";
 
 async function SettingsContent({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -30,13 +31,15 @@ async function SettingsContent({ params }: { params: Promise<{ groupId: string }
 
   const { data: group } = await supabase
     .from("groups")
-    .select("name, category, description, member_limit, invite_code")
+    .select("name, category, description, member_limit, invite_code, owner_id")
     .eq("id", groupId)
     .maybeSingle();
 
   if (!group) {
     notFound();
   }
+
+  const isOwner = group.owner_id === auth.claims.sub;
 
   return (
     <div className="flex flex-col gap-6">
@@ -62,6 +65,16 @@ async function SettingsContent({ params }: { params: Promise<{ groupId: string }
           />
         </CardContent>
       </Card>
+      {isOwner && (
+        <Card className="border-destructive/50">
+          <CardHeader>
+            <CardTitle>위험 구역</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DeleteGroupButton groupId={groupId} groupName={group.name} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
