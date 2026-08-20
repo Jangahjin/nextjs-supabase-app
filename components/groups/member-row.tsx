@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,6 +76,41 @@ export function MemberRow({
     router.refresh();
   };
 
+  const handleLeave = async () => {
+    setIsLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("group_members")
+      .update({ status: "left" })
+      .eq("id", memberId);
+
+    if (error) {
+      toast.error(error.message);
+      setIsLoading(false);
+      return;
+    }
+
+    toast.success("모임에서 나갔습니다.");
+    router.push("/groups");
+    router.refresh();
+  };
+
+  const handleRemove = async () => {
+    setIsLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase.from("group_members").delete().eq("id", memberId);
+
+    if (error) {
+      toast.error(error.message);
+      setIsLoading(false);
+      return;
+    }
+
+    toast.success("멤버를 제거했습니다.");
+    setIsLoading(false);
+    router.refresh();
+  };
+
   return (
     <TableRow>
       <TableCell>
@@ -102,6 +148,57 @@ export function MemberRow({
               거절
             </Button>
           </div>
+        )}
+        {status === "approved" && role !== "owner" && isSelf && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="outline" disabled={isLoading}>
+                모임 탈퇴
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>이 모임에서 나가시겠어요?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  나가면 이 모임의 일정·공지 등에 다시 접근하려면 초대코드로 재가입해야 합니다.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isLoading}>취소</AlertDialogCancel>
+                <AlertDialogAction variant="destructive" disabled={isLoading} onClick={handleLeave}>
+                  {isLoading ? "처리 중..." : "나가기"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+        {status === "approved" && role !== "owner" && isAdmin && !isSelf && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="destructive" disabled={isLoading}>
+                멤버 제거
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>&quot;{name}&quot;님을 모임에서 제거할까요?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  제거하면 이 멤버는 모임 정보에 접근할 수 없으며, 재가입하려면 초대코드가 다시
+                  필요합니다.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isLoading}>취소</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  disabled={isLoading}
+                  onClick={handleRemove}
+                >
+                  {isLoading ? "처리 중..." : "제거"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </TableCell>
     </TableRow>
