@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RsvpButton } from "@/components/events/rsvp-button";
 import { DeleteEventButton } from "@/components/events/delete-event-button";
+import { LiveParticipantCount } from "@/components/events/live-participant-count";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 
 function formatDateTime(iso: string) {
@@ -69,9 +70,11 @@ async function EventDetail({ params }: { params: Promise<{ groupId: string; even
         <CardContent className="flex flex-col gap-2 text-sm">
           {event.location && <p>장소: {event.location}</p>}
           {event.description && <p>{event.description}</p>}
-          <p className="text-muted-foreground">
-            참석 확정 {approvedCount ?? 0}명{event.capacity ? ` / 정원 ${event.capacity}명` : ""}
-          </p>
+          <LiveParticipantCount
+            eventId={eventId}
+            initialCount={approvedCount ?? 0}
+            capacity={event.capacity}
+          />
         </CardContent>
       </Card>
       <RsvpButton
