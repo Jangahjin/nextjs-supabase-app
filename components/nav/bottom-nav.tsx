@@ -1,13 +1,15 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Bell, Users } from "lucide-react";
+import { Bell, CalendarDays, User, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabs = [
   { href: "/groups", label: "내 모임", icon: Users },
+  { href: "/events", label: "내 이벤트", icon: CalendarDays },
   { href: "/notifications", label: "알림", icon: Bell },
+  { href: "/profile", label: "프로필", icon: User },
 ] as const;
 
 export function BottomNav() {

@@ -29,7 +29,7 @@ DB 마이그레이션은 `supabase/migrations/`에 SQL 파일로 존재하지만
 
 `app/`, `components/`, `lib/`이 프로젝트 루트에 바로 위치한다. TS 경로 별칭은 `@/*` → `./*`(tsconfig.json), shadcn 별칭은 `components.json`에 `@/components`, `@/lib`, `@/components/ui`, `@/hooks`로 정의되어 있다(단 `hooks/` 폴더는 아직 없음).
 
-- `app/` — 라우트. `app/auth/*`(login, sign-up, forgot-password, update-password, confirm route handler, error), `app/notifications/*`(인앱 알림 목록), `app/groups/*`(로그인 후 랜딩 — 모임 목록/생성/초대코드 가입 및 `[groupId]/`이하 대시보드·설정·멤버 관리·공지·`events/[eventId]/`하위의 참여자 관리·정산·카풀까지 전부 이 트리 아래에 중첩됨). 초기 스타터킷에 있던 `app/protected/*`, `app/instruments/*`는 모임 기능 스캐폴딩 과정에서 삭제되었다(커밋 `446a26e`) — 남아있는 문서에 이 경로가 언급되어 있으면 드리프트이니 갱신할 것.
+- `app/` — 라우트. `app/auth/*`(login, sign-up, forgot-password, update-password, confirm route handler, error), `app/notifications/*`(인앱 알림 목록), `app/groups/*`(로그인 후 랜딩 — 모임 목록/생성/초대코드 가입 및 `[groupId]/`이하 대시보드·설정·멤버 관리·공지·`events/[eventId]/`하위의 참여자 관리·정산·카풀까지 전부 이 트리 아래에 중첩됨). `app/events/*`(그룹에 종속되지 않는 전역 "내 이벤트" 목록/상세 — 주최·참여 이벤트를 역할 배지와 함께 통합 조회), `app/join/[code]/*`(이벤트 단위 초대코드 미리보기+참여, `app/groups/join/[code]`의 그룹 단위 초대와는 별개 네임스페이스), `app/profile/*`(주최/참여 이벤트 수 통계)는 그룹 스코프 밖의 전역 라우트다. 초기 스타터킷에 있던 `app/protected/*`, `app/instruments/*`는 모임 기능 스캐폴딩 과정에서 삭제되었다(커밋 `446a26e`) — 남아있는 문서에 이 경로가 언급되어 있으면 드리프트이니 갱신할 것.
 - `components/` — `ui/`는 shadcn/ui 원시 컴포넌트(badge, button, card, checkbox, dropdown-menu, input, label), `tutorial/`은 스타터킷 온보딩용, 나머지는 auth/테마 관련 컴포넌트가 평평하게 위치
 - `lib/supabase/` — Supabase 클라이언트 3종(`client.ts`, `server.ts`, `proxy.ts`) + `database.types.ts`(자동 생성 타입)
 - `supabase/migrations/` — SQL 마이그레이션

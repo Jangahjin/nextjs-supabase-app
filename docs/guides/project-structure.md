@@ -41,6 +41,9 @@ app/
 │   ├── error/page.tsx
 │   └── confirm/route.ts    # 이메일 확인 콜백 Route Handler
 ├── notifications/          # 🔔 인앱 알림 목록 (layout.tsx + page.tsx)
+├── events/                 # 📅 전역 "내 이벤트" (주최+참여 통합 뷰, layout.tsx + page.tsx + [eventId]/page.tsx)
+├── join/[code]/page.tsx    # ✉️ 이벤트 단위 초대코드로 미리보기 + 참여 신청 (layout.tsx 포함)
+├── profile/                # 👤 주최/참여 이벤트 수 통계 (layout.tsx + page.tsx)
 └── groups/                 # 🧑‍🤝‍🧑 로그인 후 랜딩 — 모임 관리
     ├── layout.tsx
     ├── page.tsx             # 내 모임 목록
