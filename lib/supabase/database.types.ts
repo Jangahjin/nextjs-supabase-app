@@ -268,6 +268,7 @@ export type Database = {
           end_at: string | null;
           group_id: string;
           id: string;
+          invite_code: string;
           location: string | null;
           rsvp_deadline: string | null;
           start_at: string;
@@ -283,6 +284,7 @@ export type Database = {
           end_at?: string | null;
           group_id: string;
           id?: string;
+          invite_code?: string;
           location?: string | null;
           rsvp_deadline?: string | null;
           start_at: string;
@@ -298,6 +300,7 @@ export type Database = {
           end_at?: string | null;
           group_id?: string;
           id?: string;
+          invite_code?: string;
           location?: string | null;
           rsvp_deadline?: string | null;
           start_at?: string;
@@ -641,6 +644,20 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_event_by_invite_code: {
+        Args: { p_invite_code: string };
+        Returns: {
+          approved_count: number;
+          capacity: number;
+          description: string;
+          group_id: string;
+          group_name: string;
+          id: string;
+          location: string;
+          start_at: string;
+          title: string;
+        }[];
+      };
       get_group_by_invite_code: {
         Args: { p_invite_code: string };
         Returns: {
@@ -653,6 +670,13 @@ export type Database = {
       };
       is_group_admin: { Args: { p_group_id: string }; Returns: boolean };
       is_group_member: { Args: { p_group_id: string }; Returns: boolean };
+      join_event_by_invite_code: {
+        Args: { p_invite_code: string };
+        Returns: {
+          event_id: string;
+          group_id: string;
+        }[];
+      };
       run_carpool_matching: { Args: { p_event_id: string }; Returns: undefined };
     };
     Enums: {
