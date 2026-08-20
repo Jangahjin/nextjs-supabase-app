@@ -9,8 +9,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function CarpoolRequestForm({ eventId }: { eventId: string }) {
-  const [departureArea, setDepartureArea] = useState("");
+export function CarpoolRequestForm({
+  eventId,
+  requestId,
+  initialDepartureArea = "",
+}: {
+  eventId: string;
+  requestId?: string;
+  initialDepartureArea?: string;
+}) {
+  const [departureArea, setDepartureArea] = useState(initialDepartureArea);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -20,6 +28,24 @@ export function CarpoolRequestForm({ eventId }: { eventId: string }) {
     setIsLoading(true);
     setError(null);
     const supabase = createClient();
+
+    if (requestId) {
+      const { error } = await supabase
+        .from("carpool_requests")
+        .update({ departure_area: departureArea })
+        .eq("id", requestId);
+
+      if (error) {
+        setError(error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success("탑승 신청 정보를 수정했습니다.");
+      setIsLoading(false);
+      router.refresh();
+      return;
+    }
 
     const { error } = await supabase.from("carpool_requests").insert({
       event_id: eventId,
@@ -33,7 +59,6 @@ export function CarpoolRequestForm({ eventId }: { eventId: string }) {
     }
 
     toast.success("탑승 신청을 등록했습니다.");
-    setDepartureArea("");
     setIsLoading(false);
     router.refresh();
   };
@@ -54,7 +79,13 @@ export function CarpoolRequestForm({ eventId }: { eventId: string }) {
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "등록 중..." : "탑승자로 신청하기"}
+            {isLoading
+              ? requestId
+                ? "저장 중..."
+                : "등록 중..."
+              : requestId
+                ? "저장"
+                : "탑승자로 신청하기"}
           </Button>
         </form>
       </CardContent>

@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { CarpoolMatchList } from "@/components/carpool/carpool-match-list";
 import { CarpoolOfferForm } from "@/components/carpool/carpool-offer-form";
 import { CarpoolRequestForm } from "@/components/carpool/carpool-request-form";
+import { CancelCarpoolOfferButton } from "@/components/carpool/cancel-carpool-offer-button";
+import { CancelCarpoolRequestButton } from "@/components/carpool/cancel-carpool-request-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 async function CarpoolSection({
@@ -39,6 +41,20 @@ async function CarpoolSection({
     .from("carpool_requests")
     .select("id")
     .eq("event_id", eventId);
+
+  const { data: myOffer } = await supabase
+    .from("carpool_offers")
+    .select("id, departure_area, seats_available")
+    .eq("event_id", eventId)
+    .eq("driver_id", selfId)
+    .maybeSingle();
+
+  const { data: myRequest } = await supabase
+    .from("carpool_requests")
+    .select("id, departure_area")
+    .eq("event_id", eventId)
+    .eq("rider_id", selfId)
+    .maybeSingle();
 
   const { data: rawMatches } = await supabase
     .from("carpool_matches")
@@ -81,8 +97,31 @@ async function CarpoolSection({
         </CardContent>
       </Card>
       <div className="grid gap-6">
-        <CarpoolOfferForm eventId={eventId} />
-        <CarpoolRequestForm eventId={eventId} />
+        <div className="flex flex-col gap-2">
+          <CarpoolOfferForm
+            eventId={eventId}
+            offerId={myOffer?.id}
+            initialDepartureArea={myOffer?.departure_area}
+            initialSeatsAvailable={myOffer?.seats_available}
+          />
+          {myOffer && (
+            <div className="flex justify-end">
+              <CancelCarpoolOfferButton offerId={myOffer.id} />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <CarpoolRequestForm
+            eventId={eventId}
+            requestId={myRequest?.id}
+            initialDepartureArea={myRequest?.departure_area}
+          />
+          {myRequest && (
+            <div className="flex justify-end">
+              <CancelCarpoolRequestButton requestId={myRequest.id} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -9,9 +9,19 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function CarpoolOfferForm({ eventId }: { eventId: string }) {
-  const [departureArea, setDepartureArea] = useState("");
-  const [seatsAvailable, setSeatsAvailable] = useState("");
+export function CarpoolOfferForm({
+  eventId,
+  offerId,
+  initialDepartureArea = "",
+  initialSeatsAvailable,
+}: {
+  eventId: string;
+  offerId?: string;
+  initialDepartureArea?: string;
+  initialSeatsAvailable?: number;
+}) {
+  const [departureArea, setDepartureArea] = useState(initialDepartureArea);
+  const [seatsAvailable, setSeatsAvailable] = useState(initialSeatsAvailable?.toString() ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -22,10 +32,29 @@ export function CarpoolOfferForm({ eventId }: { eventId: string }) {
     setError(null);
     const supabase = createClient();
 
-    const { error } = await supabase.from("carpool_offers").insert({
-      event_id: eventId,
+    const payload = {
       departure_area: departureArea,
       seats_available: Number(seatsAvailable),
+    };
+
+    if (offerId) {
+      const { error } = await supabase.from("carpool_offers").update(payload).eq("id", offerId);
+
+      if (error) {
+        setError(error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success("카풀 제공 정보를 수정했습니다.");
+      setIsLoading(false);
+      router.refresh();
+      return;
+    }
+
+    const { error } = await supabase.from("carpool_offers").insert({
+      event_id: eventId,
+      ...payload,
     });
 
     if (error) {
@@ -35,8 +64,6 @@ export function CarpoolOfferForm({ eventId }: { eventId: string }) {
     }
 
     toast.success("카풀 제공을 등록했습니다.");
-    setDepartureArea("");
-    setSeatsAvailable("");
     setIsLoading(false);
     router.refresh();
   };
@@ -68,7 +95,13 @@ export function CarpoolOfferForm({ eventId }: { eventId: string }) {
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "등록 중..." : "운전자로 카풀 제공하기"}
+            {isLoading
+              ? offerId
+                ? "저장 중..."
+                : "등록 중..."
+              : offerId
+                ? "저장"
+                : "운전자로 카풀 제공하기"}
           </Button>
         </form>
       </CardContent>
