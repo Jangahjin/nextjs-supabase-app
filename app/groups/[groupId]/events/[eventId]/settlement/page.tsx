@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SettlementForm } from "@/components/settlements/settlement-form";
 import { SettlementItemRow } from "@/components/settlements/settlement-item-row";
+import { DeleteSettlementButton } from "@/components/settlements/delete-settlement-button";
 
 async function SettlementSection({
   params,
@@ -65,6 +66,11 @@ async function SettlementSection({
             입금완료 · 미입금 합계 {unpaidTotal.toLocaleString("ko-KR")}원
           </CardDescription>
         </CardHeader>
+        {isAdmin && (
+          <CardContent className="flex justify-end">
+            <DeleteSettlementButton settlementId={settlement.id} />
+          </CardContent>
+        )}
       </Card>
       <Table>
         <TableHeader>
