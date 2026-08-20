@@ -226,6 +226,47 @@
       "analysisResult": "모임 이벤트 관리 웹 MVP(`.claude/plans/dynamic-wibbling-tide.md`)의 잔여 단계를 완성한다. 최종 목표: (1) 이미 구현된 정산(Phase 4) 기능을 검증 후 커밋해 작업 트리를 깨끗하게 만들고, (2) 카풀(Phase 5) 기능을 groups/events/announcements/settlements와 동일한 아키텍처 패턴(RLS 헬퍼 함수 재사용, security definer 트리거, Client Component 직접 CRUD vs Server Action/DB 함수의 mutation 경계, notify_* 알림 트리거)으로 신규 구현하며, (3) 마감 문서(CLAUDE.md, docs/guides/project-structure.md)를 실제 상태와 일치시킨다. 모든 작업은 `shrimp-rules.md`에 명시된 프로젝트 고유 규칙(RLS 헬퍼 함수 재사용 필수, 마이그레이션 템플릿 순서, mutation 위치 결정 규칙, notifications 직접 insert 금지, 그룹 스코프 페이지 자체 인증 체크 반복, database.types.ts 페어 갱신, 문서 드리프트 방지)을 따른다. 커밋 메시지와 코드 주석은 한국어로 작성한다.",
       "summary": "CLAUDE.md와 docs/guides/project-structure.md를 실제 코드 상태와 일치시켰다. CLAUDE.md의 app/ 디렉토리 설명에서 실제로 삭제된 app/protected/*, app/instruments/*(커밋 446a26e) 언급을 제거하고 실제 groups/notifications 트리로 교체했으며, 데이터베이스 절에 그동안 문서화되지 않았던 groups/group_members/events/event_participants/announcements/notifications/settlements/settlement_items와 신규 carpool_offers/carpool_requests/carpool_matches까지 전체 도메인 테이블을 한 문단으로 정리하고 is_group_member/is_group_admin 재사용 규칙 및 run_carpool_matching 패턴을 명시했다. project-structure.md의 app/·components/ 트리 예시도 동일하게 groups/events/announcements/settlements/carpool 라우트와 도메인별 컴포넌트 폴더(groups/events/announcements/settlements/carpool/notifications/nav)로 교체했다. Glob으로 문서에 언급된 모든 app/·components/ 경로가 실제로 존재함을 재확인했고, prettier --check로 두 문서 모두 포맷 통과 확인 후 별도 커밋(bcdfb94)했다. git status는 이번 작업 범위 밖으로 의도적으로 남겨둔 PRD.md/ROADMAP.md/dynamic-wibbling-tide.md/LEANCANVAS.md/leancanvuse.PNG/shrimp_data/*를 제외하고 깨끗하다. 이로써 shrimp-task-manager의 5개 작업(정산 커밋, 카풀 테이블, 카풀 매칭 함수, 카풀 UI, 문서 마감)이 모두 완료되었다.",
       "completedAt": "2026-08-18T08:06:05.399Z"
+    },
+    {
+      "id": "240cdc3a-cf6e-4c4b-8e9d-d498845320df",
+      "name": "모바일 하단 내비게이션 바 추가",
+      "description": "AppShell 안에 전역 이동용 하단 고정 내비게이션 바를 추가한다. 탭은 '내 모임'(/groups)과 '알림'(/notifications) 두 개로 한정하며, 현재 경로에 따라 활성 탭을 강조 표시한다. 그룹 내부 이동(홈/공지/일정/멤버/설정)은 이미 app/groups/[groupId]/layout.tsx의 GroupNav가 상단 탭으로 처리하고 있으므로 하단 바와 역할이 겹치지 않도록 전역 이동 전용으로 범위를 제한한다.",
+      "notes": "그룹 스코프 페이지의 GroupNav(상단 탭)와 기능이 중복되지 않도록 반드시 '전역 이동'으로만 범위를 제한한다. 로그인 전 페이지(app/page.tsx, app/auth/*)에는 AppShell을 쓰지 않으므로 자동으로 노출되지 않는다.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-08-20T05:46:47.067Z",
+      "updatedAt": "2026-08-20T05:50:11.271Z",
+      "relatedFiles": [
+        {
+          "path": "components/nav/bottom-nav.tsx",
+          "type": "CREATE",
+          "description": "신규 하단 내비게이션 바 Client Component"
+        },
+        {
+          "path": "components/nav/app-shell.tsx",
+          "type": "TO_MODIFY",
+          "description": "BottomNav 삽입 및 콘텐츠 영역 하단 padding 추가",
+          "lineStart": 1,
+          "lineEnd": 14
+        },
+        {
+          "path": "app/groups/[groupId]/layout.tsx",
+          "type": "REFERENCE",
+          "description": "기존 그룹 내부 상단 탭(GroupNav) 패턴 - 역할이 겹치지 않는지 대조용 참고",
+          "lineStart": 35,
+          "lineEnd": 62
+        },
+        {
+          "path": "components/notifications/notification-bell.tsx",
+          "type": "REFERENCE",
+          "description": "기존 아이콘/알림 배지 스타일 참고"
+        }
+      ],
+      "implementationGuide": "1. components/nav/bottom-nav.tsx 신규 Client Component 생성:\n   - \"use client\"; usePathname()으로 현재 경로 조회\n   - const tabs = [{ href: '/groups', label: '내 모임', icon: ... }, { href: '/notifications', label: '알림', icon: ... }]\n   - 각 tab에 대해 pathname.startsWith(tab.href) 여부로 active 스타일 분기(text-foreground vs text-muted-foreground)\n   - lucide-react 아이콘 사용(다른 곳에서 이미 사용 중인 패턴 재사용, 예: notification-bell.tsx의 Bell 아이콘과 통일감 유지)\n   - 컨테이너: fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] border-t bg-background, AppShell의 max-w-[480px]와 동일한 폭 기준 재사용\n2. components/nav/app-shell.tsx 수정:\n   - <BottomNav /> 를 최하단에 추가\n   - main 콘텐츠 영역에 하단 바 높이만큼 padding-bottom 추가(예: pb-20)해서 콘텐츠가 하단 바에 가리지 않게 함\n3. AppFooter(ThemeSwitcher)는 그대로 유지 - 하단 고정 바와 별개로 페이지 최하단에 존재해도 무방(스크롤해야 보이는 영역이므로 겹치지 않음)",
+      "verificationCriteria": "1) npm run lint / npm run type-check 통과. 2) Playwright로 로그인 세션에서 /groups, /notifications 방문 시 하단 바가 480px 폭 안에서 표시되고 현재 탭이 강조되는지 확인. 3) 콘텐츠 하단이 바에 가려지지 않는지 스크롤 확인. 4) 그룹 상세 페이지(/groups/[groupId])에서 상단 GroupNav와 하단 바가 동시에 보이되 내용이 중복되지 않는지 확인.",
+      "analysisResult": "Task 001(프로젝트 구조 및 라우팅 설정)은 ROADMAP.md 원안(Gather - 이벤트 플랫폼) 기준 5개 항목 중 3개(App Router 라우트 구조, 13개 페이지, 공통 레이아웃 골격)가 이미 완성된 실제 구현으로 대체되어 재작업이 불필요하다. '관리자 사이드바(플랫폼 관리자 대시보드)' 항목은 현재 스키마에 플랫폼 전역 admin 개념이 없고 최근 확정한 모바일 480px 고정 레이아웃 방향과 충돌해 사용자 확인 결과 이번 범위에서 제외한다. 남은 실행 대상은 '모바일 하단 내비게이션 바' 하나뿐이며, 기존 app/groups/[groupId]/layout.tsx의 GroupNav(그룹 내부 상단 탭)와 역할이 겹치지 않도록 전역 이동(내 모임/알림) 전용으로 범위를 좁혀 구현한다.",
+      "summary": "components/nav/bottom-nav.tsx를 신규 생성해 '내 모임'(/groups)·'알림'(/notifications) 2탭 전역 하단 내비게이션을 구현했다. usePathname().startsWith(href)로 활성 탭을 강조하고, lucide-react Users/Bell 아이콘으로 기존 notification-bell.tsx와 시각 언어를 통일했다. components/nav/app-shell.tsx에 삽입하면서 콘텐츠 영역에 pb-20을 추가해 하단 바에 콘텐츠가 가려지지 않게 했다.\n\n구현 중 Next.js 16 cacheComponents 검증에서 'usePathname()을 Suspense 밖 Client Component에서 사용' 에러가 발생해, node_modules/next/dist/docs/01-app/02-guides/migrating-to-cache-components.md의 공식 가이드에 따라 <BottomNav />를 <Suspense>로 감싸 해결했다(app-header.tsx의 기존 Suspense 패턴과 동일한 관용구).\n\nPlaywright로 로그인 세션에서 /groups, /groups/[groupId](GroupNav와 공존, 중복 없음), /notifications 3개 경로를 확인해 활성 탭 강조와 콘솔 에러 없음을 검증했고, npm run lint / type-check 모두 통과했다. 관리자 사이드바 항목은 사용자 확인에 따라 이번 범위에서 제외됨(별도 대응 불필요).",
+      "completedAt": "2026-08-20T05:50:11.268Z"
     }
   ]
 }
