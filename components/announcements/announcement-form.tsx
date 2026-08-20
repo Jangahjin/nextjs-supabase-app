@@ -10,10 +10,22 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function AnnouncementForm({ groupId }: { groupId: string }) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [pinned, setPinned] = useState(false);
+export function AnnouncementForm({
+  groupId,
+  announcementId,
+  initialTitle = "",
+  initialContent = "",
+  initialPinned = false,
+}: {
+  groupId: string;
+  announcementId?: string;
+  initialTitle?: string;
+  initialContent?: string;
+  initialPinned?: boolean;
+}) {
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
+  const [pinned, setPinned] = useState(initialPinned);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -23,6 +35,24 @@ export function AnnouncementForm({ groupId }: { groupId: string }) {
     setIsLoading(true);
     setError(null);
     const supabase = createClient();
+
+    if (announcementId) {
+      const { error } = await supabase
+        .from("announcements")
+        .update({ title, content, pinned })
+        .eq("id", announcementId);
+
+      if (error) {
+        setError(error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success("공지를 수정했습니다.");
+      router.push(`/groups/${groupId}/announcements/${announcementId}`);
+      router.refresh();
+      return;
+    }
 
     const { data, error } = await supabase
       .from("announcements")
@@ -67,7 +97,13 @@ export function AnnouncementForm({ groupId }: { groupId: string }) {
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "등록 중..." : "공지 등록"}
+            {isLoading
+              ? announcementId
+                ? "저장 중..."
+                : "등록 중..."
+              : announcementId
+                ? "저장"
+                : "공지 등록"}
           </Button>
         </form>
       </CardContent>
