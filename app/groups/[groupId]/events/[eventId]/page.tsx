@@ -101,7 +101,13 @@ async function EventDetail({ params }: { params: Promise<{ groupId: string; even
         </Link>
       </div>
       {isAdmin && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Link
+            href={`/groups/${groupId}/events/${eventId}/edit`}
+            className="text-sm underline underline-offset-4"
+          >
+            일정 수정
+          </Link>
           <DeleteEventButton groupId={groupId} eventId={eventId} />
         </div>
       )}
