@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RsvpButton } from "@/components/events/rsvp-button";
 import { DeleteEventButton } from "@/components/events/delete-event-button";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("ko-KR", {
@@ -121,7 +122,7 @@ export default function EventDetailPage({
   params: Promise<{ groupId: string; eventId: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+    <Suspense fallback={<LoadingIndicator />}>
       <EventDetail params={params} />
     </Suspense>
   );

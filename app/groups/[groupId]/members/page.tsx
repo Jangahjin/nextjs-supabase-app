@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MemberRow } from "@/components/groups/member-row";
 
@@ -65,7 +66,7 @@ export default function GroupMembersPage({ params }: { params: Promise<{ groupId
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-semibold">멤버</h2>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <MembersList params={params} />
       </Suspense>
     </div>

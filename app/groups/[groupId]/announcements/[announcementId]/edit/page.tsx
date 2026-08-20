@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { AnnouncementForm } from "@/components/announcements/announcement-form";
 
 async function EditAnnouncementGuard({
@@ -59,7 +60,7 @@ export default function EditAnnouncementPage({
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
       <h1 className="text-2xl font-bold">공지 수정</h1>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <EditAnnouncementGuard params={params} />
       </Suspense>
     </div>

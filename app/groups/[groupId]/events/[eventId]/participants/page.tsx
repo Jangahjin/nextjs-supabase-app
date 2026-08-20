@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ParticipantRow } from "@/components/events/participant-row";
+import { EmptyState } from "@/components/ui/empty-state";
 
 async function ParticipantsList({
   params,
@@ -42,7 +44,7 @@ async function ParticipantsList({
   const rows = (participants ?? []).filter((p) => p.profile !== null);
 
   if (rows.length === 0) {
-    return <p className="text-sm text-muted-foreground">아직 참석 신청이 없습니다.</p>;
+    return <EmptyState title="아직 참석 신청이 없습니다." />;
   }
 
   return (
@@ -78,7 +80,7 @@ export default function EventParticipantsPage({
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-semibold">참여자 관리</h2>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <ParticipantsList params={params} />
       </Suspense>
     </div>

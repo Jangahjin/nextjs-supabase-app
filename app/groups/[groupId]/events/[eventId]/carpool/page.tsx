@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { CarpoolMatchList } from "@/components/carpool/carpool-match-list";
 import { CarpoolOfferForm } from "@/components/carpool/carpool-offer-form";
 import { CarpoolRequestForm } from "@/components/carpool/carpool-request-form";
@@ -135,7 +136,7 @@ export default function CarpoolPage({
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-semibold">카풀</h2>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <CarpoolSection params={params} />
       </Suspense>
     </div>

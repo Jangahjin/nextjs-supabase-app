@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,7 +85,7 @@ export default function AnnouncementDetailPage({
   params: Promise<{ groupId: string; announcementId: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+    <Suspense fallback={<LoadingIndicator />}>
       <AnnouncementDetail params={params} />
     </Suspense>
   );

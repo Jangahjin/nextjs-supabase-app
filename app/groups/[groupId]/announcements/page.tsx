@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AnnouncementCard } from "@/components/announcements/announcement-card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 async function AnnouncementsSection({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -57,7 +59,7 @@ async function AnnouncementsSection({ params }: { params: Promise<{ groupId: str
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">아직 등록된 공지가 없습니다.</p>
+        <EmptyState title="아직 등록된 공지가 없습니다." />
       )}
     </div>
   );
@@ -69,7 +71,7 @@ export default function GroupAnnouncementsPage({
   params: Promise<{ groupId: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+    <Suspense fallback={<LoadingIndicator />}>
       <AnnouncementsSection params={params} />
     </Suspense>
   );

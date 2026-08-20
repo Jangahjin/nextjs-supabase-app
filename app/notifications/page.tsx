@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { NotificationList } from "@/components/notifications/notification-list";
 
 async function NotificationsContent() {
@@ -23,7 +24,7 @@ export default function NotificationsPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold">알림</h1>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <NotificationsContent />
       </Suspense>
     </div>

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 
 async function GroupNav({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -71,7 +72,7 @@ export default function GroupLayout({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <GroupNav params={params} />
       </Suspense>
       {children}

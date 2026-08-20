@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { GroupCard } from "@/components/groups/group-card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 async function MyGroups() {
   const supabase = await createClient();
@@ -22,9 +24,10 @@ async function MyGroups() {
 
   if (groups.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
-        아직 가입한 모임이 없습니다. 새 모임을 만들거나 초대코드로 가입해보세요.
-      </p>
+      <EmptyState
+        title="아직 가입한 모임이 없습니다."
+        description="새 모임을 만들거나 초대코드로 가입해보세요."
+      />
     );
   }
 
@@ -53,7 +56,7 @@ export default function GroupsPage() {
           <Link href="/groups/new">새 모임 만들기</Link>
         </Button>
       </div>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <MyGroups />
       </Suspense>
     </div>

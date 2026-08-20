@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GroupSettingsForm } from "@/components/groups/group-settings-form";
 import { InviteCodeBadge } from "@/components/groups/invite-code-badge";
@@ -81,7 +82,7 @@ async function SettingsContent({ params }: { params: Promise<{ groupId: string }
 
 export default function GroupSettingsPage({ params }: { params: Promise<{ groupId: string }> }) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+    <Suspense fallback={<LoadingIndicator />}>
       <SettingsContent params={params} />
     </Suspense>
   );

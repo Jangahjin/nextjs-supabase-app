@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { JoinGroupPanel } from "@/components/groups/join-group-panel";
 
 async function JoinPreview({ params }: { params: Promise<{ code: string }> }) {
@@ -33,7 +34,7 @@ export default function JoinGroupPage({ params }: { params: Promise<{ code: stri
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
       <h1 className="text-2xl font-bold">모임 가입하기</h1>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <JoinPreview params={params} />
       </Suspense>
     </div>

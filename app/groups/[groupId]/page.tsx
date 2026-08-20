@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 async function GroupDashboard({ params }: { params: Promise<{ groupId: string }> }) {
@@ -61,7 +62,7 @@ async function GroupDashboard({ params }: { params: Promise<{ groupId: string }>
 
 export default function GroupDashboardPage({ params }: { params: Promise<{ groupId: string }> }) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+    <Suspense fallback={<LoadingIndicator />}>
       <GroupDashboard params={params} />
     </Suspense>
   );

@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EventCard } from "@/components/events/event-card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 async function EventsSection({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -56,7 +58,7 @@ async function EventsSection({ params }: { params: Promise<{ groupId: string }> 
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">아직 등록된 일정이 없습니다.</p>
+        <EmptyState title="아직 등록된 일정이 없습니다." />
       )}
     </div>
   );
@@ -64,7 +66,7 @@ async function EventsSection({ params }: { params: Promise<{ groupId: string }> 
 
 export default function GroupEventsPage({ params }: { params: Promise<{ groupId: string }> }) {
   return (
-    <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+    <Suspense fallback={<LoadingIndicator />}>
       <EventsSection params={params} />
     </Suspense>
   );

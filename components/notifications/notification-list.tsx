@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -34,7 +35,7 @@ export function NotificationList({ notifications }: { notifications: Notificatio
   }, [notifications]);
 
   if (notifications.length === 0) {
-    return <p className="text-sm text-muted-foreground">알림이 없습니다.</p>;
+    return <EmptyState title="알림이 없습니다." />;
   }
 
   return (

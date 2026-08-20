@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SettlementForm } from "@/components/settlements/settlement-form";
@@ -107,7 +108,7 @@ export default function EventSettlementPage({
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl font-semibold">정산</h2>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <SettlementSection params={params} />
       </Suspense>
     </div>

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { EventForm } from "@/components/events/event-form";
 
 async function NewEventGuard({ params }: { params: Promise<{ groupId: string }> }) {
@@ -33,7 +34,7 @@ export default function NewEventPage({ params }: { params: Promise<{ groupId: st
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
       <h1 className="text-2xl font-bold">새 일정 만들기</h1>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중...</p>}>
+      <Suspense fallback={<LoadingIndicator />}>
         <NewEventGuard params={params} />
       </Suspense>
     </div>
