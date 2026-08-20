@@ -22,7 +22,7 @@ async function HeaderActions() {
 export function AppHeader() {
   return (
     <nav className="flex h-16 w-full justify-center border-b border-b-foreground/10">
-      <div className="flex w-full max-w-5xl items-center justify-between p-3 px-5 text-sm">
+      <div className="flex w-full max-w-[480px] items-center justify-between p-3 px-5 text-sm">
         <Link href="/groups" className="font-semibold">
           모임 관리
         </Link>
