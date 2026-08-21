@@ -39,7 +39,7 @@ export function GroupCard({
             src={`${coverImageUrl}?t=${new Date(updatedAt).getTime()}`}
             alt={`${name} 대표 사진`}
             fill
-            sizes="(min-width: 1024px) 480px, 50vw"
+            sizes="300px"
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />
         ) : (
