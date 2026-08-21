@@ -82,7 +82,7 @@ components/
 │   ├── dropdown-menu.tsx, dialog.tsx, alert-dialog.tsx, table.tsx
 │   ├── avatar.tsx, sonner.tsx
 ├── tutorial/                 # 📘 스타터킷 온보딩용 컴포넌트
-├── nav/                       # 🧭 공통 헤더/푸터/앱 셸 (app-header.tsx, app-footer.tsx, app-shell.tsx)
+├── nav/                       # 🧭 공통 헤더/푸터/앱 셸 (app-header.tsx, app-footer.tsx, app-shell.tsx, bottom-nav.tsx/desktop-nav.tsx + 공유 nav-links.ts)
 ├── groups/                    # 🧑‍🤝‍🧑 모임 생성/설정/가입/멤버 폼
 ├── events/                    # 🗓️ 일정 생성/RSVP/참여자 행
 ├── announcements/             # 📢 공지 카드/작성 폼
@@ -123,6 +123,7 @@ lib/
     ├── client.ts             # createBrowserClient — Client Component용
     ├── server.ts              # createServerClient — Server Component/Server Action용
     ├── proxy.ts                # updateSession() — proxy.ts(구 middleware)에서 호출
+    ├── storage.ts               # Storage 업로드 헬퍼 (예: uploadGroupCoverImage)
     └── database.types.ts       # mcp__supabase__generate_typescript_types로 생성되는 DB 타입
 ```
 

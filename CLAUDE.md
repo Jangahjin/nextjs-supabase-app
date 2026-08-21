@@ -31,7 +31,7 @@ DB 마이그레이션은 `supabase/migrations/`에 SQL 파일로 존재하지만
 
 - `app/` — 라우트. `app/auth/*`(login, sign-up, forgot-password, update-password, confirm route handler, error), `app/notifications/*`(인앱 알림 목록), `app/groups/*`(로그인 후 랜딩 — 모임 목록/생성/초대코드 가입 및 `[groupId]/`이하 대시보드·설정·멤버 관리·공지·`events/[eventId]/`하위의 참여자 관리·정산·카풀까지 전부 이 트리 아래에 중첩됨). `app/events/*`(그룹에 종속되지 않는 전역 "내 이벤트" 목록/상세 — 주최·참여 이벤트를 역할 배지와 함께 통합 조회), `app/join/[code]/*`(이벤트 단위 초대코드 미리보기+참여, `app/groups/join/[code]`의 그룹 단위 초대와는 별개 네임스페이스), `app/profile/*`(주최/참여 이벤트 수 통계)는 그룹 스코프 밖의 전역 라우트다. 초기 스타터킷에 있던 `app/protected/*`, `app/instruments/*`는 모임 기능 스캐폴딩 과정에서 삭제되었다(커밋 `446a26e`) — 남아있는 문서에 이 경로가 언급되어 있으면 드리프트이니 갱신할 것.
 - `components/` — `ui/`는 shadcn/ui 원시 컴포넌트(badge, button, card, checkbox, dropdown-menu, input, label), `tutorial/`은 스타터킷 온보딩용, 나머지는 auth/테마 관련 컴포넌트가 평평하게 위치
-- `lib/supabase/` — Supabase 클라이언트 3종(`client.ts`, `server.ts`, `proxy.ts`) + `database.types.ts`(자동 생성 타입)
+- `lib/supabase/` — Supabase 클라이언트 3종(`client.ts`, `server.ts`, `proxy.ts`) + `database.types.ts`(자동 생성 타입) + `storage.ts`(Storage 업로드 헬퍼)
 - `supabase/migrations/` — SQL 마이그레이션
 
 ### Supabase 클라이언트 3분할 패턴
@@ -57,7 +57,7 @@ Server-rendering 환경(Fluid compute)에서는 클라이언트를 전역 변수
 
 새 테이블을 추가할 때는 이 RLS + trigger + RPC 노출 차단 패턴을 따르고, 스키마 변경 후에는 `mcp__supabase__generate_typescript_types`로 `database.types.ts`를 재생성해야 타입이 동기화된다.
 
-`profiles` 위에 모임 도메인 테이블이 `supabase/migrations/`에 순차적으로 쌓여 있다: `groups`/`group_members`(모임·가입/역할), `events`/`event_participants`(일정·참석), `announcements`(공지), `notifications`(인앱 알림, `security definer` 트리거로만 생성), `settlements`/`settlement_items`(N빵 정산), `carpool_offers`/`carpool_requests`/`carpool_matches`(카풀 등록·매칭). 그룹 종속 테이블의 RLS는 전부 `public.is_group_member(group_id)` / `public.is_group_admin(group_id)`(`20260818120000_create_groups_and_members.sql`에서 정의된 재귀 회피용 `security definer` 헬퍼)를 재사용하며, `public.run_carpool_matching(event_id)`처럼 여러 행에 걸친 원자적 계산은 Postgres `security definer` 함수로 구현하고 함수 내부에서 `is_group_admin`을 재검증한다. 프로젝트 고유의 세부 규칙(마이그레이션 작성 순서, mutation 구현 위치 결정 등)은 `shrimp-rules.md`를 참고할 것.
+`profiles` 위에 모임 도메인 테이블이 `supabase/migrations/`에 순차적으로 쌓여 있다: `groups`/`group_members`(모임·가입/역할, `groups.cover_image_url`은 대표 사진 public URL), `events`/`event_participants`(일정·참석), `announcements`(공지), `notifications`(인앱 알림, `security definer` 트리거로만 생성), `settlements`/`settlement_items`(N빵 정산), `carpool_offers`/`carpool_requests`/`carpool_matches`(카풀 등록·매칭). 그룹 종속 테이블의 RLS는 전부 `public.is_group_member(group_id)` / `public.is_group_admin(group_id)`(`20260818120000_create_groups_and_members.sql`에서 정의된 재귀 회피용 `security definer` 헬퍼)를 재사용하며, `public.run_carpool_matching(event_id)`처럼 여러 행에 걸친 원자적 계산은 Postgres `security definer` 함수로 구현하고 함수 내부에서 `is_group_admin`을 재검증한다. Supabase Storage에는 `group-covers` 버킷(public, 모임당 `{group_id}/cover` 경로에 1장, `storage.objects` insert/update/delete는 `is_group_admin` 기반 RLS로 제한)이 있다. 버킷의 public 플래그는 `/storage/v1/object/public/...` 다운로드 엔드포인트에만 적용되고 Storage API 내부 동작(업로드 후 재조회 등)에는 적용되지 않으므로, `storage.objects`에 인증 사용자 전체 대상 select 정책(`group_covers_select_authenticated`)도 별도로 필요하다. 프로젝트 고유의 세부 규칙(마이그레이션 작성 순서, mutation 구현 위치 결정 등)은 `shrimp-rules.md`를 참고할 것.
 
 ### MCP 서버 연동 (`.mcp.json`)
 
