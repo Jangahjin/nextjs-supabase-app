@@ -16,7 +16,7 @@ async function MyGroups() {
 
   const { data: memberships } = await supabase
     .from("group_members")
-    .select("status, group:groups(id, name, category, description)")
+    .select("status, group:groups(id, name, category, description, cover_image_url, updated_at)")
     .in("status", ["pending", "approved"])
     .order("created_at", { ascending: false });
 
@@ -32,7 +32,7 @@ async function MyGroups() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
       {groups.map((m) => (
         <GroupCard
           key={m.group!.id}
@@ -41,6 +41,8 @@ async function MyGroups() {
           category={m.group!.category}
           description={m.group!.description}
           status={m.status as "pending" | "approved"}
+          coverImageUrl={m.group!.cover_image_url}
+          updatedAt={m.group!.updated_at}
         />
       ))}
     </div>
