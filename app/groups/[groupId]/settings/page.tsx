@@ -32,7 +32,9 @@ async function SettingsContent({ params }: { params: Promise<{ groupId: string }
 
   const { data: group } = await supabase
     .from("groups")
-    .select("name, category, description, member_limit, invite_code, owner_id")
+    .select(
+      "name, category, description, member_limit, invite_code, owner_id, cover_image_url, updated_at"
+    )
     .eq("id", groupId)
     .maybeSingle();
 
@@ -63,6 +65,8 @@ async function SettingsContent({ params }: { params: Promise<{ groupId: string }
             initialCategory={group.category}
             initialDescription={group.description}
             initialMemberLimit={group.member_limit}
+            initialCoverImageUrl={group.cover_image_url}
+            initialUpdatedAt={group.updated_at}
           />
         </CardContent>
       </Card>
