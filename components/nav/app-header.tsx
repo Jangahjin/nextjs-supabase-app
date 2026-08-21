@@ -1,6 +1,7 @@
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { AuthButton } from "@/components/auth-button";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { DesktopNav } from "@/components/nav/desktop-nav";
 import { createClient } from "@/lib/supabase/server";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
@@ -23,9 +24,14 @@ export function AppHeader() {
   return (
     <nav className="flex h-16 w-full justify-center border-b border-b-foreground/10">
       <div className="flex w-full max-w-5xl items-center justify-between p-3 px-5 text-sm">
-        <Link href="/groups" className="font-semibold">
-          모임 관리
-        </Link>
+        <div className="flex items-center gap-8">
+          <Link href="/groups" className="font-semibold">
+            모임 관리
+          </Link>
+          <Suspense>
+            <DesktopNav />
+          </Suspense>
+        </div>
         {!hasEnvVars ? (
           <EnvVarWarning />
         ) : (
